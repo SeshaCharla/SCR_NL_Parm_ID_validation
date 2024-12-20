@@ -81,3 +81,31 @@ class RawTestData():
         return test_dir_prefix + test_dict[self.name]
 
     # ===============================================================
+
+## =====================================================================================================================
+def load_test_data_set():
+    # Load the test Data
+    test_data = [[RawTestData(age, tst) for tst in range(3)] for age in range(2)]
+    return test_data
+
+# ======================================================================================================================
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+
+    # Actually load the entire Data set ----------------------------------------
+    test_data = load_test_data_set()
+    fig_dpi = 300
+
+    # Plotting all the Data sets
+    for i in range(2):
+        for j in range(3):
+            for key in ['u1', 'u2', 'T', 'F', 'x1', 'x2', 'y1']:
+                plt.figure()
+                plt.plot(test_data[i][j].raw['t'], test_data[i][j].raw[key], label=test_data[i][j].name + " " + key, linewidth=1)
+                plt.grid()
+                plt.legend()
+                plt.xlabel('Time [s]')
+                plt.ylabel(key)
+                plt.title(test_data[i][j].name)
+                plt.savefig("figs/" + test_data[i][j].name + "_raw_" + key + ".png", dpi=fig_dpi)
+                plt.close()
