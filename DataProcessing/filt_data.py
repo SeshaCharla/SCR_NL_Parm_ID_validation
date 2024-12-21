@@ -64,6 +64,8 @@ class FilteredTestData():
         # Smooth all the data
         for state in ['x1', 'x2', 'u1', 'u2', 'T', 'F']:
             ssd[state] = sf.sosff_TD(ssd['t_skips'], ssd[state])
+        # Set datum for the data
+        ssd = self.set_datum(ssd, type='ssd')
         # Calculating eta
         ssd['eta'] = etaCalc.calc_eta_TD(ssd['x1'], ssd['u1'], ssd['t_skips'])
         return  ssd
@@ -85,6 +87,7 @@ class FilteredTestData():
         elif self.name in ["dg_hftp", "aged_hftp"]:
             print("clearing non-existant y1 in " + self.name + " data")
             iod_tab = np.copy(iod_tab[int(400/self.dt):int(600/self.dt)])
+            # The tail region is cross sensitive to tail-pipe ammonia in dg-hftp case
         iod_mat = iod_tab.T
         iod = {}
         iod['t'] = np.array(iod_mat[0]).flatten()
@@ -98,9 +101,33 @@ class FilteredTestData():
         # Smooth all the data
         for state in ['y1', 'u1', 'u2', 'T', 'F']:
             iod[state]= sf.sosff_TD(iod['t_skips'], iod[state])
+        # Set datum for the data
+        iod = self.set_datum(iod, type='iod')
         # Calculate eta
         iod['eta'] = etaCalc.calc_eta_TD(iod['y1'], iod['u1'], iod['t_skips'])
         return iod
+
+    #===================================================================================================================
+    def set_datum(self, ssd, type='ssd'):
+        """Set the minimum values in data sets"""
+        datum = {}
+        datum['x1'] = 0
+        datum['x2'] = 0
+        datum['u1'] = 0
+        datum['u2'] = 0
+        datum['F'] = 30
+        datum['y1'] = 0
+        ssd_keys = ['x1', 'x2', 'u1', 'u2', 'F']
+        iod_keys = ['y1', 'u1', 'u2', 'F']
+        if type == 'ssd':
+            key_set = ssd_keys
+        elif type == 'iod':
+            key_set = iod_keys
+        else:
+            raise ValueError("type must be 'ssd' or 'iod'")
+        for key in key_set:
+            ssd[key] = np.array([val if val >= datum[key] else datum[key] for val in ssd[key]])
+        return ssd
 
 
 # ======================================================================================================================
@@ -116,6 +143,8 @@ def load_filtered_test_data_set():
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
+    import matplotlib as mpl
+    mpl.use('tkAgg')
 
     # Actually load the entire Data set ----------------------------------------
     test_data = rd.load_test_data_set()
@@ -134,9 +163,12 @@ if __name__ == '__main__':
                 plt.legend()
                 plt.xlabel('Time [s]')
                 plt.ylabel(key)
-                plt.title(test_data[i][j].name)
+                plt.title(test_data[i][j].name + "_ssd")
                 plt.savefig("figs/" + filtered_test_data[i][j].name + "_ssd_" + key + ".png", dpi=fig_dpi)
-                plt.close()
+                if key != 'none':
+                    plt.close()
+                else:
+                    plt.show()
             for key in ['u1', 'u2', 'T', 'F', 'y1', 'eta']:
                 plt.figure()
                 if (key != 'eta'):
@@ -148,9 +180,12 @@ if __name__ == '__main__':
                 plt.legend()
                 plt.xlabel('Time [s]')
                 plt.ylabel(key)
-                plt.title(test_data[i][j].name)
+                plt.title(test_data[i][j].name + "_iod")
                 plt.savefig("figs/" + test_data[i][j].name + "_iod_" + key + ".png", dpi=fig_dpi)
-                plt.close()
+                if key != 'none':
+                    plt.close()
+                else:
+                    plt.show()
 
     # Showing datat discontinuities --------------------------------------------
     plt.figure()
