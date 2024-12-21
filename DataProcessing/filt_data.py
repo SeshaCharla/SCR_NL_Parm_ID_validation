@@ -1,6 +1,8 @@
 import numpy as np
 import rdRawDat as rd
 import cdRLS_smoothing as cdRLS
+import scipy.signal as sig
+import sosFiltering as sf
 import etaCalc
 
 # Array Manipulating functions ------------------------------------------------------
@@ -26,7 +28,6 @@ def rmNaNrows(x):
 #===============================================================================================
 class FilteredTestData():
     """Class of filtered test data both ssd and iod"""
-
     #===========================================================================================
     def __init__(self, age: int, test_type: int):
         self.rawData = rd.RawTestData(age, test_type)
@@ -34,6 +35,7 @@ class FilteredTestData():
         self.name = self.rawData.name
         self.cdRLS_parms = cdRLS.cdRLS_parms("test")
         self.ssd = self.gen_ssd()
+        self.iod = self.gen_iod()
 
     # ==========================================================================================
     def gen_ssd(self) -> dict[str, np.ndarray]:
@@ -59,10 +61,7 @@ class FilteredTestData():
         ssd['t_skips'] = find_discontinuities(ssd['t'], self.dt)
         # Smooth all the data
         for state in ['x1', 'x2', 'u1', 'u2', 'T', 'F']:
-            ssd[state], g1, g2 = cdRLS.cdRLS_withTD(ssd['t_skips'], ssd[state],
-                                                         self.cdRLS_parms.lmbda,
-                                                         self.cdRLS_parms.nu[state],
-                                                         self.cdRLS_parms.h[state])
+            ssd[state] = sf.sosff_TD(ssd['t_skips'], ssd[state])
         # Calculating eta
         ssd['eta'] = etaCalc.calc_eta_TD(ssd['x1'], ssd['u1'], ssd['t_skips'])
         return  ssd
@@ -105,3 +104,68 @@ class FilteredTestData():
         return iod
 
 
+# ======================================================================================================================
+
+## =====================================================================================================================
+def load_filtered_test_data_set():
+    # Load the test Data
+    filtered_test_data = [[FilteredTestData(age, tst) for tst in range(3)] for age in range(2)]
+    return filtered_test_data
+
+# ======================================================================================================================
+
+
+if __name__ == '__main__':
+    import matplotlib.pyplot as plt
+
+    # Actually load the entire Data set ----------------------------------------
+    test_data = rd.load_test_data_set()
+    filtered_test_data = load_filtered_test_data_set()
+    fig_dpi = 300
+
+    # Plotting all the Data sets
+    for i in range(2):
+        for j in range(3):
+            for key in ['u1', 'u2', 'T', 'F', 'x1', 'x2', 'eta']:
+                plt.figure()
+                plt.plot(filtered_test_data[i][j].ssd['t'], filtered_test_data[i][j].ssd[key], label= key+"_filtered", linewidth=1)
+                if (key != 'eta'):
+                    plt.plot(test_data[i][j].raw['t'], test_data[i][j].raw[key], label=key, linewidth=1)
+                plt.grid()
+                plt.legend()
+                plt.xlabel('Time [s]')
+                plt.ylabel(key)
+                plt.title(test_data[i][j].name)
+                plt.savefig("figs/" + filtered_test_data[i][j].name + "_ssd_" + key + ".png", dpi=fig_dpi)
+                plt.close()
+            for key in ['u1', 'u2', 'T', 'F', 'y1', 'eta']:
+                plt.figure()
+                plt.plot(filtered_test_data[i][j].iod['t'], filtered_test_data[i][j].iod[key], label=key + "_filtered", linewidth=1)
+                if (key != 'eta'):
+                    plt.plot(test_data[i][j].raw['t'], test_data[i][j].raw[key], label=key, linewidth=1)
+                plt.grid()
+                plt.legend()
+                plt.xlabel('Time [s]')
+                plt.ylabel(key)
+                plt.title(test_data[i][j].name)
+                plt.savefig("figs/" + test_data[i][j].name + "_iod_" + key + ".png", dpi=fig_dpi)
+                plt.close()
+
+    # Showing datat discontinuities --------------------------------------------
+    plt.figure()
+    for i in range(2):
+        for j in range(3):
+            t = filtered_test_data[i][j].ssd['t']
+            plt.plot(np.arange(len(t)), t, label=test_data[i][j].name + 'ss', linewidth=1)
+            t = filtered_test_data[i][j].iod['t']
+            plt.plot(np.arange(len(t)), t, label=test_data[i][j].name + 'io', linewidth=1)
+    plt.grid()
+    plt.legend()
+    plt.xlabel('Index')
+    plt.ylabel('Time [s]')
+    plt.title('Time discontinuities in test Data')
+    plt.savefig("figs/time_discontinuities_test.png", dpi=fig_dpi)
+    plt.close()
+
+    # plt.show()
+    plt.close('all')

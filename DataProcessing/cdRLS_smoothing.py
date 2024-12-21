@@ -7,7 +7,6 @@ def cdRLS_smooth(y, lmda=0, nu=0, h=0):
        nu: drift parameter
        h: threshold parameter
        return: smoothed data
-       Added a median filter with window lenth med_win=5 for removing one off spikes
     """
     n = len(y)
     med_win = 5         ## window of the median filter
@@ -19,10 +18,10 @@ def cdRLS_smooth(y, lmda=0, nu=0, h=0):
     g1     = np.zeros(n)
     g2     = np.zeros(n)
     th_hat[0] = y[0]
-    l = 0
+    # l = 0
     for t in range(1,n):
         # update variables
-        l = l+1
+        # l = l+1
         eps[t] = y[t] - th_hat[t-1]
         s1[t] = eps[t]
         s2[t] = -eps[t]
@@ -32,11 +31,11 @@ def cdRLS_smooth(y, lmda=0, nu=0, h=0):
             th_hat[t] = y[t]            # reset rls estimate
             g1[t] = 0
             g2[t] = 0
-            l = 0
+            # l = 0
         else:
             th_hat[t] = lmda * th_hat[t - 1] + (1 - lmda) * y[t]        # RLS estimate
-            if l > med_win:
-                th_hat[t] = np.median(th_hat[(t-med_win):t], axis=0)  # Median filter after RLS
+            # if l > med_win:
+            #     th_hat[t] = np.median(th_hat[(t-med_win):t], axis=0)  # Median filter after RLS
     return th_hat, g1, g2
 
 
