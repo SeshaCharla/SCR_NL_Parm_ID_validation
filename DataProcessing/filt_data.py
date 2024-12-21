@@ -21,8 +21,10 @@ def find_discontinuities(t, dt):
 # =============================================================================================
 def rmNaNrows(x):
     """Remove the rows with NaN values"""
-    return np.delete(x, [i for i in range(len(x))
-                         if np.any(np.isnan(x[i]))], axis=0)
+    return np.delete(x,
+                     [i for i in range(len(x))
+                         if np.any(np.isnan(x[i]))],
+                     axis=0)
 
 
 #===============================================================================================
@@ -78,11 +80,11 @@ class FilteredTestData():
         iod_tab = rmNaNrows(raw_tab)
         # Clearing non-existant iod data, y1 doesn't work bellow a certain temperature
         if self.name in ["dg_cftp", "aged_cftp"]:
-            print("clearing non-existant " + self.name + " data")
+            print("clearing non-existant y1 in " + self.name + " data")
             iod_tab = np.copy(iod_tab[int(950/self.dt):])
         elif self.name in ["dg_hftp", "aged_hftp"]:
-            print("clearing non-existant " + self.name + " data")
-            iod_tab = np.copy(iod_tab[int(500/self.dt):])
+            print("clearing non-existant y1 in " + self.name + " data")
+            iod_tab = np.copy(iod_tab[int(400/self.dt):int(600/self.dt)])
         iod_mat = iod_tab.T
         iod = {}
         iod['t'] = np.array(iod_mat[0]).flatten()
@@ -95,10 +97,7 @@ class FilteredTestData():
         iod['t_skips'] = find_discontinuities(iod['t'], self.dt)
         # Smooth all the data
         for state in ['y1', 'u1', 'u2', 'T', 'F']:
-            iod[state], g1, g2 = cdRLS.cdRLS_withTD(iod['t_skips'], iod[state],
-                                                         self.cdRLS_parms.lmbda,
-                                                         self.cdRLS_parms.nu[state],
-                                                         self.cdRLS_parms.h[state])
+            iod[state]= sf.sosff_TD(iod['t_skips'], iod[state])
         # Calculate eta
         iod['eta'] = etaCalc.calc_eta_TD(iod['y1'], iod['u1'], iod['t_skips'])
         return iod
@@ -128,9 +127,9 @@ if __name__ == '__main__':
         for j in range(3):
             for key in ['u1', 'u2', 'T', 'F', 'x1', 'x2', 'eta']:
                 plt.figure()
-                plt.plot(filtered_test_data[i][j].ssd['t'], filtered_test_data[i][j].ssd[key], label= key+"_filtered", linewidth=1)
                 if (key != 'eta'):
-                    plt.plot(test_data[i][j].raw['t'], test_data[i][j].raw[key], label=key, linewidth=1)
+                    plt.plot(test_data[i][j].raw['t'], test_data[i][j].raw[key], '--', label=key, linewidth=1)
+                plt.plot(filtered_test_data[i][j].ssd['t'], filtered_test_data[i][j].ssd[key], label= key+"_filtered", linewidth=1)
                 plt.grid()
                 plt.legend()
                 plt.xlabel('Time [s]')
@@ -140,9 +139,11 @@ if __name__ == '__main__':
                 plt.close()
             for key in ['u1', 'u2', 'T', 'F', 'y1', 'eta']:
                 plt.figure()
-                plt.plot(filtered_test_data[i][j].iod['t'], filtered_test_data[i][j].iod[key], label=key + "_filtered", linewidth=1)
                 if (key != 'eta'):
-                    plt.plot(test_data[i][j].raw['t'], test_data[i][j].raw[key], label=key, linewidth=1)
+                    plt.plot(test_data[i][j].raw['t'], test_data[i][j].raw[key], '--', label=key, linewidth=1)
+                plt.plot(filtered_test_data[i][j].iod['t'], filtered_test_data[i][j].iod[key], label=key + "_filtered", linewidth=1)
+                if (key == 'y1'):
+                    plt.plot(filtered_test_data[i][j].ssd['t'], filtered_test_data[i][j].ssd['x1'], '--', label='x1_filtered', linewidth=1)
                 plt.grid()
                 plt.legend()
                 plt.xlabel('Time [s]')
@@ -169,3 +170,19 @@ if __name__ == '__main__':
 
     # plt.show()
     plt.close('all')
+
+
+
+
+## Not usefull sutff
+"""Remove the data from IOD tab where the temperature is less than 200 + y_Tmin deg C"""
+"""
+# ==================================================================================================================
+    def IOD_temp_exclusion(self, iod_tab):
+        y_Tmin = 20
+        return np.delete(iod_tab,
+                         [i for i in range(len(iod_tab))
+                                        if (self.rawData.raw['T'])[i]< y_Tmin],
+                         axis=0)
+
+"""
