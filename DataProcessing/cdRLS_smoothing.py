@@ -1,6 +1,6 @@
 import numpy as np
 
-
+#=======================================================================================================================
 def cdRLS_smooth(y, lmda=0, nu=0, h=0):
     """yt: time series data
        lmda: forgetting factor
@@ -40,6 +40,7 @@ def cdRLS_smooth(y, lmda=0, nu=0, h=0):
     return th_hat, g1, g2
 
 
+# ======================================================================================================================
 def cdRLS_withTD(t_skips, y, lmda=0, nu=0, h=0):
     """CD-RLS on data with time-discontinuities
         yt: time series data
@@ -61,6 +62,7 @@ def cdRLS_withTD(t_skips, y, lmda=0, nu=0, h=0):
     return th_hat, g1, g2
 
 
+# ======================================================================================================================
 class cdRLS_parms:
     def __init__(self, str):
         if str == "test":
@@ -103,3 +105,5 @@ class cdRLS_parms:
         else:
             raise(ValueError("Wrong string argument"))
 
+
+# ======================================================================================================================
