@@ -35,7 +35,6 @@ class FilteredTestData():
         self.rawData = rd.RawTestData(age, test_type)
         self.dt = self.rawData.dt
         self.name = self.rawData.name
-        self.cdRLS_parms = cdRLS.cdRLS_parms("test")
         self.ssd = self.gen_ssd()
         self.iod = self.gen_iod()
 

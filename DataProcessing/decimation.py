@@ -22,8 +22,8 @@ def decimate_time2OneHz(tskips, t):
     s = []
     q = 5
     for i in range(len(tskips)-1):
-        s_des = np.linspace(t[tskips[i]], t[tskips[i+1]-1], int(len(t[tskips[i]:tskips[i+1]-1])/q)+1)
-        s.append(s_des)
+        s_des = t[tskips[i]] + np.arange(int(len(t[tskips[i]:tskips[i+1]-1])/q)+1)
+        s = np.concatenate((s, s_des), axis=0)
     return np.array(s).flatten()
 
 # ============================================================================================
@@ -35,11 +35,11 @@ if __name__ == '__main__':
     import matplotlib as mpl
     mpl.use("tkAgg")
 
-    dat = fl.FilteredTestData(0, 2)
+    dat = fl.FilteredTestData(1, 1)
 
-    s = dat.ssd['x1']
-    t = dat.ssd['t']
-    tskips = dat.ssd['t_skips']
+    s = dat.iod['y1']
+    t = dat.iod['t']
+    tskips = dat.iod['t_skips']
 
     dec_s = decimate_withTD(tskips, s)
     dec_t = decimate_time2OneHz(tskips, t)
