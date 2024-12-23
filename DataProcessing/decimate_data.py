@@ -24,7 +24,8 @@ class decimatedTestData():
             ssd[key] = dc.decimate_withTD(self.filtData.ssd['t_skips'], self.filtData.ssd[key])
         ssd['t'] = dc.decimate_time2OneHz(self.filtData.ssd['t_skips'], self.filtData.ssd['t'])
         ssd['t_skips'] = fd.find_discontinuities(ssd['t'], self.dt)
-        ssd['eta_dec'] = etaCalc.calc_eta_TD(ssd['x1'], ssd['u1'], ssd['t_skips'])
+        ssd['eta_dec'] = ssd['eta']
+        ssd['eta'] = etaCalc.calc_eta_TD(ssd['x1'], ssd['u1'], ssd['t_skips'])
         return ssd
 
     # =========================================================================
@@ -36,7 +37,8 @@ class decimatedTestData():
             iod[key] = dc.decimate_withTD(self.filtData.iod['t_skips'], self.filtData.iod[key])
         iod['t'] = dc.decimate_time2OneHz(self.filtData.iod['t_skips'], self.filtData.iod['t'])
         iod['t_skips'] = fd.find_discontinuities(iod['t'], self.dt)
-        iod['eta_dec'] = etaCalc.calc_eta_TD(iod['y1'], iod['u1'], iod['t_skips'])
+        iod['eta_dec'] = iod['eta']
+        iod['eta'] = etaCalc.calc_eta_TD(iod['y1'], iod['u1'], iod['t_skips'])
         return iod
 
 # ======================================================================================================================
@@ -68,17 +70,16 @@ if __name__ == '__main__':
                 plt.plot(dct[i][j].filtData.ssd['t'], dct[i][j].filtData.ssd[key], '-.', label= key+"_filtered", linewidth=1)
                 plt.plot(dct[i][j].ssd['t'], dct[i][j].ssd[key], '--',label=key + "_decimated", linewidth=1)
                 if (key == 'eta'):
-                    plt.plot(dct[i][j].ssd['t'], dct[i][j].ssd['eta_dec'], '--', label=key+"_calcPostDec", linewidth=1)
+                    plt.plot(dct[i][j].ssd['t'], dct[i][j].ssd['eta_dec'], '--', label="decimate(eta_filtered)", linewidth=1)
                 plt.grid()
                 plt.legend()
                 plt.xlabel('Time [s]')
                 plt.ylabel(key)
                 plt.title(dct[i][j].name + "_ssd")
                 plt.savefig("figs/" + dct[i][j].name + "_ssd_" + key + ".png", dpi=fig_dpi)
-                if key != 'none':
+                if key != 'eta':
                     plt.close()
-                else:
-                    plt.show()
+
             for key in ['u1', 'u2', 'T', 'F', 'y1', 'eta']:
                 plt.figure()
                 if (key != 'eta'):
@@ -86,17 +87,15 @@ if __name__ == '__main__':
                 plt.plot(dct[i][j].filtData.iod['t'], dct[i][j].filtData.iod[key], '-.', label= key+"_filtered", linewidth=1)
                 plt.plot(dct[i][j].iod['t'], dct[i][j].iod[key], '--', label=key + "_decimated", linewidth=1)
                 if (key == 'eta'):
-                    plt.plot(dct[i][j].iod['t'], dct[i][j].iod['eta_dec'], '--', label=key+"_calcPostDec", linewidth=1)
+                    plt.plot(dct[i][j].iod['t'], dct[i][j].iod['eta_dec'], '--', label="decimate(eta_filtered)", linewidth=1)
                 plt.grid()
                 plt.legend()
                 plt.xlabel('Time [s]')
                 plt.ylabel(key)
                 plt.title(dct[i][j].name + "_iod")
                 plt.savefig("figs/" + dct[i][j].name + "_iod_" + key + ".png", dpi=fig_dpi)
-                if key != 'none':
+                if key != 'eta':
                     plt.close()
-                else:
-                    plt.show()
 
     # Showing datat discontinuities --------------------------------------------
     plt.figure()
@@ -114,5 +113,5 @@ if __name__ == '__main__':
     plt.savefig("figs/time_discontinuities_test.png", dpi=fig_dpi)
     plt.close()
 
-    # plt.show()
-    plt.close('all')
+    plt.show()
+    # plt.close('all')
