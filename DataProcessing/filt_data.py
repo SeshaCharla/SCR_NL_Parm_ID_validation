@@ -208,7 +208,7 @@ if __name__ == '__main__':
 
 
 
-## Not usefull sutff
+## Not useful stuff
 """Remove the data from IOD tab where the temperature is less than 200 + y_Tmin deg C"""
 """
 # ==================================================================================================================
