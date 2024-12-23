@@ -6,15 +6,13 @@ lp_filt = sig.cheby2(7,40,  0.1, 'low', analog=False, fs=5, output='sos')
 def sosff_TD(tskips, x: np.ndarray) -> np.ndarray:
     """Filter the data with time jumps"""
     pad_len = 24
-    n = len(x)
-    y = np.zeros(n)
+    y = np.zeros(np.shape(x))
     for i in range(1, len(tskips)):
         if len(x[tskips[i-1]:tskips[i]]) > pad_len:
             y[tskips[i-1]:tskips[i]] = sig.sosfiltfilt(lp_filt, x[tskips[i-1]:tskips[i]])
         else:
             y[tskips[i - 1]:tskips[i]] = x[tskips[i - 1]:tskips[i]]
     return y
-
 
 
 if __name__ == "__main__":

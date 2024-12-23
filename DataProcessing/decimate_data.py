@@ -64,7 +64,7 @@ if __name__ == '__main__':
             for key in ['u1', 'u2', 'T', 'F', 'x1', 'x2', 'eta']:
                 plt.figure()
                 if (key != 'eta'):
-                    plt.plot(dct[i][j].filtData.rawData.raw['t'], dct[i][j].filtData.rawData.raw[key], ':', label=key, linewidth=1)
+                    plt.plot(dct[i][j].filtData.rawData.raw['t'], dct[i][j].filtData.rawData.raw[key], ':', label=key+"_raw", linewidth=1)
                 plt.plot(dct[i][j].filtData.ssd['t'], dct[i][j].filtData.ssd[key], '-.', label= key+"_filtered", linewidth=1)
                 plt.plot(dct[i][j].ssd['t'], dct[i][j].ssd[key], '--',label=key + "_decimated", linewidth=1)
                 if (key == 'eta'):
@@ -82,7 +82,7 @@ if __name__ == '__main__':
             for key in ['u1', 'u2', 'T', 'F', 'y1', 'eta']:
                 plt.figure()
                 if (key != 'eta'):
-                    plt.plot(dct[i][j].filtData.rawData.raw['t'], dct[i][j].filtData.rawData.raw[key], ':', label=key, linewidth=1)
+                    plt.plot(dct[i][j].filtData.rawData.raw['t'], dct[i][j].filtData.rawData.raw[key], ':', label=key+"_raw", linewidth=1)
                 plt.plot(dct[i][j].filtData.iod['t'], dct[i][j].filtData.iod[key], '-.', label= key+"_filtered", linewidth=1)
                 plt.plot(dct[i][j].iod['t'], dct[i][j].iod[key], '--', label=key + "_decimated", linewidth=1)
                 if (key == 'eta'):

@@ -9,11 +9,11 @@ import etaCalc
 #==============================================================================================
 def find_discontinuities(t, dt):
     """Find the discontinuities in the time Data
-    The slices would be: [[t_skips[0], t_skips[1]], ...
+    The slices would be: [ [t_skips[0], t_skips[1]], ... [t_skips[n-1], t_skips[n]] ]
     """
     t_skips = np.array([i for i in range(1, len(t))
                         if t[i] - t[i - 1] > 1.5 * dt], dtype=int)
-    t_skips = np.append(t_skips, len(t))
+    t_skips = np.append(t_skips, len(t))            # Included the len(t) to follow the slicing rule of open interval
     t_skips = np.insert(t_skips, 0, 0)
     return t_skips
 
