@@ -59,6 +59,7 @@ if __name__ == '__main__':
     # Actually load the entire Data set ----------------------------------------
     dct = load_decimated_test_data_set()
     fig_dpi = 300
+    show_plot = 'u1'
 
     # Plotting all the Data sets
     for i in range(2):
@@ -77,7 +78,7 @@ if __name__ == '__main__':
                 plt.ylabel(key)
                 plt.title(dct[i][j].name + "_ssd")
                 plt.savefig("figs/" + dct[i][j].name + "_ssd_" + key + ".png", dpi=fig_dpi)
-                if key != 'eta':
+                if key != show_plot:
                     plt.close()
 
             for key in ['u1', 'u2', 'T', 'F', 'y1', 'eta']:
@@ -94,7 +95,7 @@ if __name__ == '__main__':
                 plt.ylabel(key)
                 plt.title(dct[i][j].name + "_iod")
                 plt.savefig("figs/" + dct[i][j].name + "_iod_" + key + ".png", dpi=fig_dpi)
-                if key != 'eta':
+                if key != show_plot:
                     plt.close()
 
     # Showing datat discontinuities --------------------------------------------
