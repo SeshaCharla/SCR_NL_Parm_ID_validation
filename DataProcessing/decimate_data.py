@@ -64,9 +64,9 @@ if __name__ == '__main__':
             for key in ['u1', 'u2', 'T', 'F', 'x1', 'x2', 'eta']:
                 plt.figure()
                 if (key != 'eta'):
-                    plt.plot(dct[i][j].filtData.rawData.raw['t'], dct[i][j].filtData.rawData.raw[key], '--', label=key, linewidth=1)
-                plt.plot(dct[i][j].filtData.ssd['t'], dct[i][j].filtData.ssd[key], '--', label= key+"_filtered", linewidth=1)
-                plt.plot(dct[i][j].ssd['t'], dct[i][j].ssd[key], label=key + "_decimated", linewidth=1)
+                    plt.plot(dct[i][j].filtData.rawData.raw['t'], dct[i][j].filtData.rawData.raw[key], ':', label=key, linewidth=1)
+                plt.plot(dct[i][j].filtData.ssd['t'], dct[i][j].filtData.ssd[key], '-.', label= key+"_filtered", linewidth=1)
+                plt.plot(dct[i][j].ssd['t'], dct[i][j].ssd[key], '--',label=key + "_decimated", linewidth=1)
                 if (key == 'eta'):
                     plt.plot(dct[i][j].ssd['t'], dct[i][j].ssd['eta_dec'], '--', label=key+"_calcPostDec", linewidth=1)
                 plt.grid()
@@ -82,9 +82,9 @@ if __name__ == '__main__':
             for key in ['u1', 'u2', 'T', 'F', 'y1', 'eta']:
                 plt.figure()
                 if (key != 'eta'):
-                    plt.plot(dct[i][j].filtData.rawData.raw['t'], dct[i][j].filtData.rawData.raw[key], '--', label=key, linewidth=1)
-                plt.plot(dct[i][j].filtData.iod['t'], dct[i][j].filtData.iod[key], '--', label= key+"_filtered", linewidth=1)
-                plt.plot(dct[i][j].iod['t'], dct[i][j].iod[key], label=key + "_decimated", linewidth=1)
+                    plt.plot(dct[i][j].filtData.rawData.raw['t'], dct[i][j].filtData.rawData.raw[key], ':', label=key, linewidth=1)
+                plt.plot(dct[i][j].filtData.iod['t'], dct[i][j].filtData.iod[key], '-.', label= key+"_filtered", linewidth=1)
+                plt.plot(dct[i][j].iod['t'], dct[i][j].iod[key], '--', label=key + "_decimated", linewidth=1)
                 if (key == 'eta'):
                     plt.plot(dct[i][j].iod['t'], dct[i][j].iod['eta_dec'], '--', label=key+"_calcPostDec", linewidth=1)
                 plt.grid()
@@ -103,9 +103,9 @@ if __name__ == '__main__':
     for i in range(2):
         for j in range(3):
             t = dct[i][j].ssd['t']
-            plt.plot(np.arange(len(t)), t, label=dct[i][j].name + 'ss', linewidth=1)
+            plt.plot(np.arange(len(t)), t, '--', label=dct[i][j].name + 'ss', linewidth=1)
             t = dct[i][j].iod['t']
-            plt.plot(np.arange(len(t)), t, label=dct[i][j].name + 'io', linewidth=1)
+            plt.plot(np.arange(len(t)), t, '--', label=dct[i][j].name + 'io', linewidth=1)
     plt.grid()
     plt.legend()
     plt.xlabel('Index')
