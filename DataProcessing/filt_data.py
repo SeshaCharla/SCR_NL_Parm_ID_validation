@@ -81,10 +81,10 @@ class FilteredTestData():
         iod_tab = rmNaNrows(raw_tab)
         # Clearing non-existant iod data, y1 doesn't work bellow a certain temperature
         if self.name in ["dg_cftp", "aged_cftp"]:
-            print("clearing non-existant y1 in " + self.name + " data")
+            print("clearing non-existant y1 in " + self.name + " data for iod")
             iod_tab = np.copy(iod_tab[int(950/self.dt):])
         elif self.name in ["dg_hftp", "aged_hftp"]:
-            print("clearing non-existant y1 in " + self.name + " data")
+            print("clearing non-existant y1 in " + self.name + " data for iod")
             iod_tab = np.copy(iod_tab[int(400/self.dt):int(600/self.dt)])
             # The tail region is cross sensitive to tail-pipe ammonia in dg-hftp case
         iod_mat = iod_tab.T
