@@ -1,3 +1,4 @@
+import numpy as np
 from scipy.signal import welch
 
 def welch_psd(y, fs):
@@ -31,6 +32,8 @@ def welch_TD(y, t_skips, fs):
             f_i, psd_i = welch_psd(y[t_skips[i]:t_skips[i+1]], fs)
             f.append(f_i)
             psd.append(psd_i)
-    return f, psd
+    f = np.array(f).flatten()
+    psd = np.array(psd).flatten()
+    return f, psd/np.max(psd)
 
 # ================================================================================================================
