@@ -109,6 +109,7 @@ if __name__ == "__main__":
     import matplotlib
     matplotlib.use('tkAgg')
     fig_dpi = 300
+    tsts = ['cFTP', 'hFTP', 'RMC']
 
     dat = dd.load_decimated_test_data_set()
     start = 1
@@ -128,25 +129,25 @@ if __name__ == "__main__":
         plt.xlabel('Time')
         plt.ylabel(r'$y(k) = \eta(k+1) - f_{\phi1}(k) * \eta(k)$')
         plt.legend()
-        plt.title('y')
+        plt.title('y in {}'.format(tsts[test]))
         plt.grid(True)
-        plt.savefig("figs/y_test-{}".format(test), dpi=fig_dpi)
+        plt.savefig("figs/y_{}".format(tsts[test]), dpi=fig_dpi)
         plt.close()
         # ===================================================================
         plt.figure(10*test+1)
         plt.xlabel('Time')
         plt.ylabel(r'$f_{\phi1}$')
-        plt.title(r'$f_{\phi1}$')
+        plt.title(r'$f_{\phi1}$ in ' + tsts[test])
         plt.legend()
         plt.grid(True)
-        plt.savefig("figs/f_test-{}".format(test), dpi=fig_dpi)
+        plt.savefig("figs/f_{}".format(tsts[test]), dpi=fig_dpi)
         plt.close()
         for i in range(8):
             plt.figure(10*test + 2 + i)
             plt.xlabel('Time')
             plt.ylabel(r'$\phi_{NO_x}$'+'[:, {}]'.format(i))
             plt.legend()
-            plt.title(r'$\phi_{NO_x}$'+'[:, {}]'.format(i))
+            plt.title(r'$\phi_{NO_x}$'+'[:, {}] in {}'.format(i, tsts[test]))
             plt.grid(True)
-            plt.savefig("figs/phi_{}_test-{}".format(i, test), dpi=fig_dpi)
+            plt.savefig("figs/phi_{}_{}".format(i, tsts[test]), dpi=fig_dpi)
             plt.close()
