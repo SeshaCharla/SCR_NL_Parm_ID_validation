@@ -91,15 +91,11 @@ class phiAlg():
 
     # ======================================================================
     def y(self, k: int) -> float:
-        """ y(k) = eta(k) - eta(k-1)*f_phi1(k-1)"""
-        m = k-1
-        if k < 2:
-            raise ValueError("k needs to be >= 2")
-        # =========================================
+        """ y(k) = eta(k+1) - eta(k)*f_phi1(k)"""
+        eta_kp1 = self.ssd["eta"][k+1]
         eta_k = self.ssd["eta"][k]
-        eta_m = self.ssd["eta"][m]
-        f_phi1_m = self.f_phi1(m)
-        y_k = eta_k - (eta_m * f_phi1_m)
+        f_phi1_k = self.f_phi1(k)
+        y_k = eta_kp1 - (eta_k * f_phi1_k)
         return y_k
 
     # =============================================
@@ -115,22 +111,22 @@ if __name__ == "__main__":
     fig_dpi = 300
 
     dat = dd.load_decimated_test_data_set()
-    start = 2
+    start = 1
     for test in range(3):
         for age in range(2):
             p = phiAlg(dat[age][test])
             plt.figure(10*test)
-            plt.plot(p.ssd['t'][start:], [p.y(i) for i in range(start, len(p.ssd['t']))], linewidth = 1, label = p.dat.name)
+            plt.plot(p.ssd['t'][start:-1], [p.y(i) for i in range(start, len(p.ssd['t'])-1)], linewidth = 1, label = p.dat.name)
             plt.figure(10*test+1)
-            plt.plot(p.ssd['t'][start-1:], [p.f_phi1(i) for i in range(start-1, len(p.ssd['t']))], linewidth = 1, label = p.dat.name)
-            phi_nox_mats = np.concatenate([((p.phi_nox(k)).reshape([1, 8])) for k in range(start-1, len(p.ssd['t']))], axis = 0)
+            plt.plot(p.ssd['t'][start:], [p.f_phi1(i) for i in range(start, len(p.ssd['t']))], linewidth = 1, label = p.dat.name)
+            phi_nox_mats = np.concatenate([((p.phi_nox(k)).reshape([1, 8])) for k in range(start, len(p.ssd['t']))], axis = 0)
             for i in range(8):
                 plt.figure(10*test + 2 + i)
-                plt.plot(p.ssd['t'][start-1:], phi_nox_mats[:, i], linewidth = 1, label = p.dat.name)
+                plt.plot(p.ssd['t'][start:], phi_nox_mats[:, i], linewidth = 1, label = p.dat.name)
         # ==================================================================================================================================
         plt.figure(10*test)
         plt.xlabel('Time')
-        plt.ylabel('y = eta(k) - f_phi1(m) * eta(m)')
+        plt.ylabel(r'$y(k) = \eta(k+1) - f_{\phi1}(k) * \eta(k)$')
         plt.legend()
         plt.title('y')
         plt.grid(True)
@@ -139,8 +135,8 @@ if __name__ == "__main__":
         # ===================================================================
         plt.figure(10*test+1)
         plt.xlabel('Time')
-        plt.ylabel('f_phi1')
-        plt.title('f_phi1')
+        plt.ylabel(r'$f_{\phi1}$')
+        plt.title(r'$f_{\phi1}$')
         plt.legend()
         plt.grid(True)
         plt.savefig("figs/f_test-{}".format(test), dpi=fig_dpi)
@@ -148,9 +144,9 @@ if __name__ == "__main__":
         for i in range(8):
             plt.figure(10*test + 2 + i)
             plt.xlabel('Time')
-            plt.ylabel('phi_nox[:, {}]'.format(i))
+            plt.ylabel(r'$\phi_{NO_x}$'+'[:, {}]'.format(i))
             plt.legend()
-            plt.title('phi_nox[:, {}]'.format(i))
+            plt.title(r'$\phi_{NO_x}$'+'[:, {}]'.format(i))
             plt.grid(True)
             plt.savefig("figs/phi_{}_test-{}".format(i, test), dpi=fig_dpi)
             plt.close()
