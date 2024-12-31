@@ -6,7 +6,7 @@ import km_data as km
 class phiAlg():
     """ Class holding the methods and data for phi algorithm for kth time step """
     #==============================================================================
-    def __init__(self, dec_dat: dd.decimatedTestData):
+    def __init__(self, dec_dat: dd.decimatedTestData) -> None:
         """ Initiates the object which holds the data set """
         self.dat = dec_dat
         self.ssd = self.dat.ssd
@@ -61,6 +61,9 @@ class phiAlg():
     def phi_f1(self, k: int) -> np.ndarray[6, 1]:
         """ phi_f1(k) = eta(k) * f_phi1(k) * [phi_ur(m); phi(m); u1(m)*phi(m)] """
         m = k-1
+        if m < 0:
+            raise ValueError("k needs to be >= 1")
+        # =========================================
         eta_k = self.ssd["eta"][k]
         f_phi1_k = self.f_phi1(k)
         phi_ur_m = self.phi_ur(m)
@@ -90,6 +93,9 @@ class phiAlg():
     def y(self, k: int) -> float:
         """ y(k) = eta(k) - eta(k-1)*f_phi1(k-1)"""
         m = k-1
+        if m < 0:
+            raise ValueError("k needs to be >= 1")
+        # =========================================
         eta_k = self.ssd["eta"][k]
         eta_m = self.ssd["eta"][m]
         f_phi1_m = self.f_phi1(m)
@@ -97,3 +103,25 @@ class phiAlg():
         return y_k
 
     # =============================================
+
+
+# ======================================================================================================================
+# Testing
+
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    import matplotlib
+    matplotlib.use('tkAgg')
+
+    dat = dd.load_decimated_test_data_set()
+    start = 2
+    for test in range(3):
+        plt.figure()
+        for age in range(2):
+            p = phiAlg(dat[age][test])
+            plt.plot(p.ssd['t'][start:], [p.y(i) for i in range(start, len(p.ssd['t']))], linewidth = 1, label = p.dat.name)
+        plt.xlabel('Time')
+        plt.ylabel('y = eta(k) - f_phi1(m) * eta(m)')
+        plt.legend()
+        plt.grid(True)
+        plt.show()

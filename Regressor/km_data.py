@@ -6,6 +6,8 @@ class km_dat():
     """ Class holding the current and previous data set"""
     # ====================================================
     def __init__(self, ssd, k, check_integrity = False):
+        if k < 1:
+            raise ValueError("k must be >= 1")
         # ssd at time-step k
         self.x1k = ssd['x1'][k]
         self.x2k = ssd['x2'][k]
