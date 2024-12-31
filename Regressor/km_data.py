@@ -8,6 +8,7 @@ class km_dat():
     def __init__(self, ssd, k, check_integrity = False):
         if k < 1:
             raise ValueError("k must be >= 1")
+        # =====================================
         # ssd at time-step k
         self.x1k = ssd['x1'][k]
         self.x2k = ssd['x2'][k]
@@ -27,9 +28,9 @@ class km_dat():
 
         # Checking the integrity of eta
         if check_integrity:
-            print('eta[k] = {} \n x1[k] = {} \n u1[m] = {}'.format(self.etak, self.x1k, self.u1m))
-            print("diff = {}".format(self.etak - (self.u1m - self.x1k)))
             if not self.check_eta_integrity():
+                print('eta[k] = {} \n x1[k] = {} \n u1[m] = {}'.format(self.etak, self.x1k, self.u1m))
+                print("  diff = {}".format(self.etak - (self.u1m - self.x1k)))
                 raise ValueError("Eta integrity check failed!")
 
     # =====================================================
@@ -45,8 +46,3 @@ if __name__ == '__main__':
     from dec_dat import *
     dat = dd.decimatedTestData(0, 0)
     km_data = km_dat(dat.ssd, 5, check_integrity = True)
-    print(km_data)
-
-
-
-
