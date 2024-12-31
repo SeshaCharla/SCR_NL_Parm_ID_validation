@@ -62,7 +62,7 @@ class phiAlg():
         """ phi_f1(k) = eta(k) * f_phi1(k) * [phi_ur(m); phi(m); u1(m)*phi(m)] """
         m = k-1
         if m < 0:
-            raise ValueError("k needs to be >= 1")
+            raise ValueError("No causally preceding data")
         # =========================================
         eta_k = self.ssd["eta"][k]
         f_phi1_k = self.f_phi1(k)
@@ -99,7 +99,7 @@ class phiAlg():
         eta_k = self.ssd["eta"][k]
         eta_m = self.ssd["eta"][m]
         f_phi1_m = self.f_phi1(m)
-        y_k = eta_k - eta_m * f_phi1_m
+        y_k = eta_k - (eta_m * f_phi1_m)
         return y_k
 
     # =============================================
@@ -116,12 +116,29 @@ if __name__ == "__main__":
     dat = dd.load_decimated_test_data_set()
     start = 2
     for test in range(3):
-        plt.figure()
         for age in range(2):
             p = phiAlg(dat[age][test])
+            plt.figure(3*test)
             plt.plot(p.ssd['t'][start:], [p.y(i) for i in range(start, len(p.ssd['t']))], linewidth = 1, label = p.dat.name)
+            plt.figure(3*test+1)
+            plt.plot(p.ssd['t'][start:], [p.f_phi1(i) for i in range(start, len(p.ssd['t']))], linewidth = 1, label = p.dat.name)
+            plt.figure(3*test + 2)
+            plt.plot(p.ssd['t'], p.ssd['u2'], linewidth = 1, label = p.dat.name)
+        plt.figure(3*test)
         plt.xlabel('Time')
         plt.ylabel('y = eta(k) - f_phi1(m) * eta(m)')
+        plt.legend()
+        plt.title('y')
+        plt.grid(True)
+        plt.figure(3*test+1)
+        plt.xlabel('Time')
+        plt.ylabel('f_phi1')
+        plt.title('f_phi1')
+        plt.legend()
+        plt.grid(True)
+        plt.figure(3 * test + 2)
+        plt.xlabel('Time')
+        plt.ylabel('u_inj')
         plt.legend()
         plt.grid(True)
     plt.show()

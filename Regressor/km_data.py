@@ -7,7 +7,7 @@ class km_dat():
     # ====================================================
     def __init__(self, ssd, k, check_integrity = False):
         if k < 1:
-            raise ValueError("k must be >= 1")
+            raise ValueError("No causally preceding data")
         # =====================================
         # ssd at time-step k
         self.x1k = ssd['x1'][k]
