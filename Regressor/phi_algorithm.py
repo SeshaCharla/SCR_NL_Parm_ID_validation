@@ -53,7 +53,7 @@ class phiAlg():
         ssd_km = self.get_km_dat(k)
         u1_frac = ssd_km.u1k/ssd_km.u1m
         F_frac = ssd_km.Fm/ssd_km.Fk
-        T_frac = (ssd_km.Tk * ssd_km.Tm + 1) / (ssd_km.Tm**2 + 1)
+        T_frac = ((ssd_km.Tk * ssd_km.Tm) + 1) / ((ssd_km.Tm**2) + 1)
         f_phi1_k = u1_frac * F_frac * T_frac
         return f_phi1_k
 
@@ -93,8 +93,8 @@ class phiAlg():
     def y(self, k: int) -> float:
         """ y(k) = eta(k) - eta(k-1)*f_phi1(k-1)"""
         m = k-1
-        if m < 0:
-            raise ValueError("k needs to be >= 1")
+        if k < 2:
+            raise ValueError("k needs to be >= 2")
         # =========================================
         eta_k = self.ssd["eta"][k]
         eta_m = self.ssd["eta"][m]
@@ -124,4 +124,4 @@ if __name__ == "__main__":
         plt.ylabel('y = eta(k) - f_phi1(m) * eta(m)')
         plt.legend()
         plt.grid(True)
-        plt.show()
+    plt.show()
