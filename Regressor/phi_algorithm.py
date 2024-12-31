@@ -112,33 +112,45 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     import matplotlib
     matplotlib.use('tkAgg')
+    fig_dpi = 300
 
     dat = dd.load_decimated_test_data_set()
     start = 2
     for test in range(3):
         for age in range(2):
             p = phiAlg(dat[age][test])
-            plt.figure(3*test)
+            plt.figure(10*test)
             plt.plot(p.ssd['t'][start:], [p.y(i) for i in range(start, len(p.ssd['t']))], linewidth = 1, label = p.dat.name)
-            plt.figure(3*test+1)
-            plt.plot(p.ssd['t'][start:], [p.f_phi1(i) for i in range(start, len(p.ssd['t']))], linewidth = 1, label = p.dat.name)
-            plt.figure(3*test + 2)
-            plt.plot(p.ssd['t'], p.ssd['u2'], linewidth = 1, label = p.dat.name)
-        plt.figure(3*test)
+            plt.figure(10*test+1)
+            plt.plot(p.ssd['t'][start-1:], [p.f_phi1(i) for i in range(start-1, len(p.ssd['t']))], linewidth = 1, label = p.dat.name)
+            phi_nox_mats = np.concatenate([((p.phi_nox(k)).reshape([1, 8])) for k in range(start-1, len(p.ssd['t']))], axis = 0)
+            for i in range(8):
+                plt.figure(10*test + 2 + i)
+                plt.plot(p.ssd['t'][start-1:], phi_nox_mats[:, i], linewidth = 1, label = p.dat.name)
+        # ==================================================================================================================================
+        plt.figure(10*test)
         plt.xlabel('Time')
         plt.ylabel('y = eta(k) - f_phi1(m) * eta(m)')
         plt.legend()
         plt.title('y')
         plt.grid(True)
-        plt.figure(3*test+1)
+        plt.savefig("figs/y_test-{}".format(test), dpi=fig_dpi)
+        plt.close()
+        # ===================================================================
+        plt.figure(10*test+1)
         plt.xlabel('Time')
         plt.ylabel('f_phi1')
         plt.title('f_phi1')
         plt.legend()
         plt.grid(True)
-        plt.figure(3 * test + 2)
-        plt.xlabel('Time')
-        plt.ylabel('u_inj')
-        plt.legend()
-        plt.grid(True)
-    plt.show()
+        plt.savefig("figs/f_test-{}".format(test), dpi=fig_dpi)
+        plt.close()
+        for i in range(8):
+            plt.figure(10*test + 2 + i)
+            plt.xlabel('Time')
+            plt.ylabel('phi_nox[:, {}]'.format(i))
+            plt.legend()
+            plt.title('phi_nox[:, {}]'.format(i))
+            plt.grid(True)
+            plt.savefig("figs/phi_{}_test-{}".format(i, test), dpi=fig_dpi)
+            plt.close()
