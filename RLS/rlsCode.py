@@ -9,3 +9,6 @@ class rls_run():
     def __init__(self, dat: dd.decimatedTestData):
         """ Starts the RLS algorithm """
         self.phi_alg = ph.phiAlg(dat)
+        self.name = dat.name
+        self.data_len = len(dat.ssd['t'])
+

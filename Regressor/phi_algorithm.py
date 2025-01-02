@@ -10,6 +10,7 @@ class phiAlg():
         """ Initiates the object which holds the data set """
         self.dat = dec_dat
         self.ssd = self.dat.ssd
+        self.data_len = len(self.ssd['t'])
 
     # ========================================================
     def get_km_dat(self, k: int) -> km.km_dat:
@@ -92,6 +93,10 @@ class phiAlg():
     # ======================================================================
     def y(self, k: int) -> float:
         """ y(k) = eta(k+1) - eta(k)*f_phi1(k)"""
+        # Gaurd conditions for k
+        if (k < 1) or (k >= self.data_len -1):
+            raise ValueError("k out of range of causality")
+        # ============================
         eta_kp1 = self.ssd["eta"][k+1]
         eta_k = self.ssd["eta"][k]
         f_phi1_k = self.f_phi1(k)
@@ -117,7 +122,7 @@ if __name__ == "__main__":
         for age in range(2):
             p = phiAlg(dat[age][test])
             plt.figure(10*test)
-            plt.plot(p.ssd['t'][start:-1], [p.y(i) for i in range(start, len(p.ssd['t'])-1)], linewidth = 1, label = p.dat.name)
+            plt.plot(p.ssd['t'][start:-1], [p.y(i) for i in range(start, len(p.ssd['t']) - 1)], linewidth = 1, label = p.dat.name)
             plt.figure(10*test+1)
             plt.plot(p.ssd['t'][start:], [p.f_phi1(i) for i in range(start, len(p.ssd['t']))], linewidth = 1, label = p.dat.name)
             phi_nox_mats = np.concatenate([((p.phi_nox(k)).reshape([1, 8])) for k in range(start, len(p.ssd['t']))], axis = 0)
