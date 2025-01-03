@@ -1,6 +1,6 @@
 import numpy as np
-from dec_dat import *
 import km_data as km
+from DataProcessing import decimate_data as dd
 # ===================
 
 class phiAlg():
