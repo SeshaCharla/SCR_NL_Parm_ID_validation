@@ -1,5 +1,4 @@
 import numpy as np
-import scipy.signal as sig
 import rdRawDat as rd
 import sosFiltering as sf
 import etaCalc
