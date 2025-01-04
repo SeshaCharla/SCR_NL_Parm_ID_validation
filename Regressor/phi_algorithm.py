@@ -104,7 +104,13 @@ class phiAlg():
         return y_k
 
     # =============================================
-
+    def check_PE(self):
+        """ Do a PE condition check for the phi """
+        sum = np.zeros([8,8])
+        for k in range(1, self.data_len):
+            phi_k = self.phi_nox(k)
+            sum += phi_k @ phi_k.T
+        return np.linalg.eigvals(sum)
 
 # ======================================================================================================================
 # Testing
