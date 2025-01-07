@@ -12,10 +12,10 @@ class rls_run():
         self.phi_alg = ph.phiAlg(dat)
         self.name = dat.name
         self.data_len = len(dat.ssd['t'])
-        self.W0 = 1e5
 
         # Memoization
         self.y_vec = np.array([0] * (self.data_len-2), dtype=float)
+        self.y_est = np.array([0] * (self.data_len - 2), dtype=float)
         self.phiNox_vec = np.array([np.zeros([8,1], dtype=float)] * (self.data_len-2))
         self.P_vec = np.array([np.zeros([8, 8], dtype=float)] * (self.data_len-2))
         self.Gam_vec = np.array([np.zeros([8, 8], dtype=float)] * (self.data_len-2))
@@ -26,8 +26,7 @@ class rls_run():
         self.P_eigs = np.array([0] * (self.data_len-2), dtype=float)
 
         # Recursion
-        self.P_vec[0] = 1e2 * np.eye(8)
-        self.P_eigs[0] = 1e2
+        self.P_vec[0] = 1e6 * np.eye(8)
         for k in range(1, self.data_len-2):
             self.recursion(k)
 
@@ -54,6 +53,7 @@ class rls_run():
         self.get_pr_err(k)
         self.update_theta(k)
         self.get_err_pst(k)
+        self.get_y_est()
 
     # ===================================================================================
     def get_Gamma(self, k: int) -> None:
@@ -74,7 +74,7 @@ class rls_run():
         """
         phi = self.phiNox_vec[k]
         gam = self.Gam_vec[k]
-        mat = (1/(self.W0) + (phi.T @ gam @ phi)[0,0])
+        mat = 1 + (phi.T @ gam @ phi)[0,0]
         self.mil_vec[k] = 1/mat
 
     # ============================================
@@ -85,7 +85,7 @@ class rls_run():
         mil = self.mil_vec[k]
         P = gam - mil*((gam @ phi) @ (phi.T @ gam))
         self.P_vec[k] = P
-        self.P_eigs[k] = np.max(np.linalg.eigvals(P))
+        self.P_eigs[k] = np.max(np.abs(np.linalg.eigvals(P)))
 
     # ==============================================
     def get_pr_err(self, k: int) -> None:
@@ -110,9 +110,16 @@ class rls_run():
         P = self.P_vec[k]
         phi = self.phiNox_vec[k]
         p_err = self.pr_err_vec[k]
-        theta = theta_m + (P @ phi) * self.W0 * p_err
+        theta = theta_m + (P @ phi) * p_err
         self.theta_vec[k] = theta
 
+    # ================================================
+    def get_y_est(self):
+        """ Simulate the entire data with the final estiamtes """
+        th = self.theta_vec[-1]
+        self.y_est = [((self.phiNox_vec[k]).T @ th)[0, 0] for k in range(len(self.phiNox_vec))]
+
+    # ==========================================================================================
 
 # ======================================================================================================================
 
@@ -121,13 +128,19 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import matplotlib as mpl
     mpl.use('tkAgg')
-    dat = dd.decimatedTestData(0, 1)
+    dat = dd.decimatedTestData(1, 1)
     rls = rls_run(dat)
-    print(rls.theta_vec[-1])
+    print(rls.phi_alg.W @ rls.theta_vec[-1])
     plt.figure()
-    plt.plot(rls.pr_err_vec)
-    plt.plot(rls.err_pst_vec)
+    plt.plot(rls.pr_err_vec, label="err_prior")
+    plt.plot(rls.err_pst_vec, label="err_post")
+    plt.legend()
     plt.figure()
     plt.plot(rls.P_eigs)
+    plt.figure()
+    plt.plot(rls.y_vec, label="y")
+    plt.plot(rls.y_est, label="y_est")
+    plt.legend()
     plt.show()
+
 
