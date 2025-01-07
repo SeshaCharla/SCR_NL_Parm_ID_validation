@@ -11,7 +11,8 @@ class phiAlg():
         self.dat = dec_dat
         self.ssd = self.dat.ssd
         self.data_len = len(self.ssd['t'])
-        self.W = np.diag([1, 1e2, 1e-3, 1e-1, 1e-4, 1e-2, 1e2, 1e4])
+        self.W = np.diag([1e-2, 1, 1e2, 1e-4, 1e-3, 1e-1, 1e-6, 1e-4, 1e-2, 1, 1e2, 1e4])
+        #np.diag([1, 1e2, 1e-3, 1e-1, 1e-4, 1e-2, 1e2, 1e4])
 
     # ========================================================
     def get_km_dat(self, k: int) -> km.km_dat:
@@ -22,7 +23,7 @@ class phiAlg():
     def phi(self, k: int) -> np.ndarray[2, 1]:
         """ phi(k) = [T[k], 1]^T """
         T_k = self.ssd["T"][k]
-        phi_k = np.matrix([[T_k], [1]])
+        phi_k = np.matrix([[T_k**2], [T_k], [-1]])
         return phi_k
 
     # =========================================
@@ -30,12 +31,12 @@ class phiAlg():
         """ f_r = (Fm/um) * (Tk*Tm +1)/(Tm^2 + 1) """
         ssd_km = self.get_km_dat(k)
         Fu1_m = ssd_km.Fm/ssd_km.u1m
-        T_frac = ((ssd_km.Tk * ssd_km.Tm) + 1) / ((ssd_km.Tm**2) + 1)
-        f_phi1_k = Fu1_m * T_frac
+        # T_frac = ((ssd_km.Tk * ssd_km.Tm) + 1) / ((ssd_km.Tm**2) + 1)
+        f_phi1_k = Fu1_m #* T_frac
         return f_phi1_k
 
     # ==============================================================
-    def phi_fr(self, k: int) -> np.ndarray[6, 1]:
+    def phi_fr(self, k: int) -> np.ndarray[9, 1]:
         """ phi_f1(k) = eta(k) * [(u2m/u1m)*phi(k); (Fm/u1m)*phi(k); (Fm) * phi(k)] """
         # =========================================
         ssd_km = self.get_km_dat(k)
@@ -48,7 +49,7 @@ class phiAlg():
         return K*M
 
     # ===============================================================================
-    def phi_Gamma_r(self, k: int) -> np.ndarray[2, 1]:
+    def phi_Gamma_r(self, k: int) -> np.ndarray[3, 1]:
         """ phi_gamma1(k) = (u2m/Fm)*phi(k) """
         phi_k = self.phi(k)
         km_ssd = self.get_km_dat(k)
@@ -56,7 +57,7 @@ class phiAlg():
         return phi_Gamma_r_k
 
     # ==========================================================================
-    def phi_nox(self, k: int) -> np.ndarray[8, 1]:
+    def phi_nox(self, k: int) -> np.ndarray[12, 1]:
         """ phi_nox(k) = [-phi_f1(k); phi_gamma1(k)] """
         phi_fr_k = self.phi_fr(k)
         phi_Gamma_r_k = self.phi_Gamma_r(k)
@@ -102,16 +103,16 @@ if __name__ == "__main__":
     for test in range(3):
         for age in range(2):
             p = phiAlg(dat[age][test])
-            plt.figure(10*test)
+            plt.figure(14*test)
             plt.plot(p.ssd['t'][start:-1], [p.y(i) for i in range(start, len(p.ssd['t']) - 1)], linewidth = 1, label = p.dat.name)
-            plt.figure(10*test+1)
+            plt.figure(14*test+1)
             plt.plot(p.ssd['t'][start:], [p.f_r(i) for i in range(start, len(p.ssd['t']))], linewidth = 1, label = p.dat.name)
-            phi_nox_mats = np.concatenate([((p.phi_nox(k)).reshape([1, 8])) for k in range(start, len(p.ssd['t']))], axis = 0)
-            for i in range(8):
-                plt.figure(10*test + 2 + i)
+            phi_nox_mats = np.concatenate([((p.phi_nox(k)).reshape([1, 12])) for k in range(start, len(p.ssd['t']))], axis = 0)
+            for i in range(12):
+                plt.figure(14*test + 2 + i)
                 plt.plot(p.ssd['t'][start:], phi_nox_mats[:, i], linewidth = 1, label = p.dat.name)
         # ==================================================================================================================================
-        plt.figure(10*test)
+        plt.figure(14*test)
         plt.xlabel('Time')
         plt.ylabel(r'$y(k) = F_{u_1}(k)* \eta(k+1) - f_{r}(k) * \eta(k)$')
         plt.legend()
@@ -120,7 +121,7 @@ if __name__ == "__main__":
         plt.savefig("figs/y_{}".format(tsts[test]), dpi=fig_dpi)
         plt.close()
         # ===================================================================
-        plt.figure(10*test+1)
+        plt.figure(14*test+1)
         plt.xlabel('Time')
         plt.ylabel(r'$f_{r}$')
         plt.title(r'$f_{r}$ in ' + tsts[test])
@@ -128,8 +129,8 @@ if __name__ == "__main__":
         plt.grid(True)
         plt.savefig("figs/f_{}".format(tsts[test]), dpi=fig_dpi)
         plt.close()
-        for i in range(8):
-            plt.figure(10*test + 2 + i)
+        for i in range(12):
+            plt.figure(14*test + 2 + i)
             plt.xlabel('Time')
             plt.ylabel(r'$\phi_{NO_x}$'+'[:, {}]'.format(i))
             plt.legend()

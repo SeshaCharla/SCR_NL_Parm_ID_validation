@@ -20,7 +20,7 @@ class LS_solve():
     def make_phi_mat(self) -> np.ndarray:
         """ Creat the Phi matrix """
         data_len = self.phi_alg.data_len
-        Phi = np.zeros([data_len-2, 8], dtype=float)
+        Phi = np.zeros([data_len-2, 12], dtype=float)
         for k in range(data_len-2):
             Phi[k, :] = (self.phi_alg.phi_nox(k+1)).T
         return Phi
@@ -53,13 +53,16 @@ if __name__ == '__main__':
     ls_sol = [[LS_solve(dats[age][tst]) for tst in range(3)] for age in range(2)]
     theta_names = [r'$\theta_{ads}$', r'$\theta_{od}$', r'$\theta_{scr}$', r'$\theta_{ads/scr}$']
     for i in range(4):
-        plt.figure()
+        fig = plt.figure()
+        ax = fig.add_subplot(projection='3d')
         for age in range(2):
             for tst in range(3):
-                plt.scatter(ls_sol[age][tst].theta[2*i], ls_sol[age][tst].theta[2*i+1], label=ls_sol[age][tst].name)
-                plt.title(theta_names[i])
-                plt.grid(True)
-                plt.legend()
+                print(ls_sol[age][tst].theta)
+                ax.scatter(ls_sol[age][tst].theta[3*i], ls_sol[age][tst].theta[3*i+1], ls_sol[age][tst].theta[3*i+2],
+                           label=ls_sol[age][tst].name)
+                ax.set_title(theta_names[i])
+                ax.grid(True)
+                ax.legend()
 
     plt.show()
 
