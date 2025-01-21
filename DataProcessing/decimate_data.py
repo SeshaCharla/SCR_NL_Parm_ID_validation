@@ -59,7 +59,7 @@ if __name__ == '__main__':
     # Actually load the entire Data set ----------------------------------------
     dct = load_decimated_test_data_set()
     fig_dpi = 300
-    show_plot = 'u1'
+    show_plot = 'eta'
 
     # Plotting all the Data sets
     for i in range(2):

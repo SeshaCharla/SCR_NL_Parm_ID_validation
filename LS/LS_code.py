@@ -1,5 +1,4 @@
 import numpy as np
-from scipy.optimize import lsq_linear
 from DataProcessing import decimate_data as dd
 from Regressor import phi_algorithm as ph
 
@@ -51,15 +50,34 @@ if __name__ == '__main__':
 
     dats = dd.load_decimated_test_data_set()
     ls_sol = [[LS_solve(dats[age][tst]) for tst in range(3)] for age in range(2)]
+
+    # Mixed data solution
+    ls_mats_dg = [LS_solve(dats[0][tst]) for tst in range(3)]
+    ls_mats_ag = [LS_solve(dats[1][tst]) for tst in range(3)]
+
+    Y_dg = np.concatenate([ls_mats_dg[i].Y[600:900] for i in range(len(ls_mats_dg))])
+    Phi_dg = np.concatenate([ls_mats_dg[i].Phi[600:900, :] for i in range(len(ls_mats_dg))])
+    theta_dg = np.linalg.lstsq(Phi_dg, Y_dg)[0]
+    print(theta_dg)
+
+    Y_ag = np.concatenate([ls_mats_ag[i].Y[600:900] for i in range(len(ls_mats_ag))])
+    Phi_ag = np.concatenate([ls_mats_ag[i].Phi[600:900, :] for i in range(len(ls_mats_ag))])
+    theta_ag = np.linalg.lstsq(Phi_ag, Y_ag)[0]
+    print(theta_ag)
+
     theta_names = [r'$\theta_{ads}$', r'$\theta_{od}$', r'$\theta_{scr}$', r'$\theta_{ads/scr}$']
+    sc_markers = ['s', 'x']
     for i in range(4):
         plt.figure()
+        plt.scatter(theta_dg[2 * i], theta_dg[2 * i + 1], label="degreened_mixed", marker=sc_markers[0])
+        plt.scatter(theta_ag[2 * i], theta_ag[2 * i + 1], label="aged_mixed", marker=sc_markers[1])
         for age in range(2):
             for tst in range(3):
-                plt.scatter(ls_sol[age][tst].theta[2*i], ls_sol[age][tst].theta[2*i+1], label=ls_sol[age][tst].name)
-                plt.title(theta_names[i])
-                plt.grid(True)
-                plt.legend()
+                plt.scatter(ls_sol[age][tst].theta[2*i], ls_sol[age][tst].theta[2*i+1], label=ls_sol[age][tst].name, marker=sc_markers[age])
+        plt.title(theta_names[i])
+        plt.xlabel('m')
+        plt.ylabel('c')
+        plt.grid(True)
+        plt.legend()
 
     plt.show()
-

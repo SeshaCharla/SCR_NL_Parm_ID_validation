@@ -110,7 +110,7 @@ class FilteredTestData():
         datum = {}
         datum['x1'] = 0
         datum['x2'] = 0
-        datum['u1'] = 1     # Most of the testcell data shows this
+        datum['u1'] = 10     # Most of the testcell data shows this
         datum['u2'] = 0
         datum['F'] = 30     # From all the test cell data
         datum['y1'] = 0

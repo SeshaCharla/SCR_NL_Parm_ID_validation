@@ -4,14 +4,15 @@ import numpy as np
 """ Standard Units:
     Temperature: deference from 250 deg-C
     Mass flow rate: g/s
-    Concentration: g/ml or g/cm^3
+    Concentration: x 10^-3 mol/m^3
+    urea_ine: 10^-3 ml/sec
     Area: cm^2
 
     Concentration   & $mol/cm^{3} = mol/ml$ 
     Time            & $s$ 
     Mass            & $g$ 
     Length          & $cm$ 
-    Temperature     & $(T-250)\lx{^o}{C}$ 
+    Temperature     & $(T-250) lx{^o}{C}$ 
 """
 
 # Constants
@@ -20,18 +21,18 @@ T0 = 200                               # Reference temperature in deg-C
 M_nox = 30.0061                        # Molecular weight of NOx in g/mol
 M_nh3 = 17.0305                        # Molecular weight of NH3 in g/mol
 
-def uConv(x, conv_type: str):
+def uConv(x, Tscr, conv_type: str):
     """Unit conversion for the states"""
     match conv_type:
         case "-T0C":
             return np.array([xi - T0 for xi in x])
         case "kg/min to g/s":
             return np.array([xi * kgmin2gsec for xi in x])
-        case "NOx ppm to mol/m^3":
-            return np.array([xi/M_nox for xi in x])
-        case "NH3 ppm to mol/m^3":
-            return np.array([xi/M_nh3 for xi in x])
-        case _:
+        case "ppm to 10^-3 mol/m^3":
+            return np.array([(xi/(22.4*((273.15+T_scr)/(273.15)))) for (xi, T_scr) in zip(x, Tscr)])
+        case "ml/s to 10^-3 ml/s":
+            return np.array([xi*1e3 for xi in x])
+        case _: # Default
             return x
 #===
 

@@ -26,7 +26,7 @@ class rls_run():
         self.P_eigs = np.array([0] * (self.data_len-2), dtype=float)
 
         # Recursion
-        self.P_vec[0] = 1e6 * np.eye(8)
+        self.P_vec[0] = 100 * np.eye(8)
         for k in range(1, self.data_len-2):
             self.recursion(k)
 
@@ -128,19 +128,28 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import matplotlib as mpl
     mpl.use('tkAgg')
-    dat = dd.decimatedTestData(1, 1)
+    dat = dd.decimatedTestData(0, 0)
     rls = rls_run(dat)
     print(rls.phi_alg.W @ rls.theta_vec[-1])
+
     plt.figure()
     plt.plot(rls.pr_err_vec, label="err_prior")
     plt.plot(rls.err_pst_vec, label="err_post")
+    plt.title("Prior and Posterior Errors for "+dat.name)
     plt.legend()
+    plt.grid(True)
+
     plt.figure()
-    plt.plot(rls.P_eigs)
+    plt.plot(rls.P_eigs[30:])
+    plt.title("Maximum Eigen Value of P matrix for " + dat.name)
+    plt.grid(True)
+
     plt.figure()
     plt.plot(rls.y_vec, label="y")
     plt.plot(rls.y_est, label="y_est")
+    plt.title("Actual and Estimated y for " + dat.name)
     plt.legend()
+    plt.grid(True)
     plt.show()
 
 
