@@ -2,17 +2,10 @@ import numpy as np
 
 """The file contains the functions that do the appropriate unit conversions for the states and inputs from the experimental data"""
 """ Standard Units:
-    Temperature: deference from 250 deg-C
-    Mass flow rate: g/s
-    Concentration: x 10^-3 mol/m^3
-    urea_ine: 10^-3 ml/sec
-    Area: cm^2
-
-    Concentration   & $mol/cm^{3} = mol/ml$ 
-    Time            & $s$ 
-    Mass            & $g$ 
-    Length          & $cm$ 
-    Temperature     & $(T-250) lx{^o}{C}$ 
+    Temperature     : deference from 250 deg-C
+    Mass flow rate  : g/s
+    Concentration   : x 10^-3 mol/m^3
+    urea_inj        : 10^-3 ml/sec
 """
 
 # Constants
