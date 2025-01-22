@@ -54,12 +54,13 @@ def load_decimated_test_data_set():
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import matplotlib as mpl
+    import unit_convs as uc
     mpl.use('tkAgg')
 
     # Actually load the entire Data set ----------------------------------------
     dct = load_decimated_test_data_set()
     fig_dpi = 300
-    show_plot = 'u1'
+    show_plot = 'T'
 
     # Plotting all the Data sets
     for i in range(2):
@@ -75,7 +76,7 @@ if __name__ == '__main__':
                 plt.grid()
                 plt.legend()
                 plt.xlabel('Time [s]')
-                plt.ylabel(key)
+                plt.ylabel(key + uc.units[key])
                 plt.title(dct[i][j].name + "_ssd")
                 plt.savefig("figs/" + dct[i][j].name + "_ssd_" + key + ".png", dpi=fig_dpi)
                 if key != show_plot:
@@ -92,7 +93,7 @@ if __name__ == '__main__':
                 plt.grid()
                 plt.legend()
                 plt.xlabel('Time [s]')
-                plt.ylabel(key)
+                plt.ylabel(key + uc.units[key])
                 plt.title(dct[i][j].name + "_iod")
                 plt.savefig("figs/" + dct[i][j].name + "_iod_" + key + ".png", dpi=fig_dpi)
                 if key != show_plot:

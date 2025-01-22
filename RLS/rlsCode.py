@@ -128,7 +128,7 @@ if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import matplotlib as mpl
     mpl.use('tkAgg')
-    dat = dd.decimatedTestData(0, 0)
+    dat = dd.decimatedTestData(0, 2)
     rls = rls_run(dat)
     print(rls.phi_alg.W @ rls.theta_vec[-1])
 

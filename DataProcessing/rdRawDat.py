@@ -33,27 +33,27 @@ class RawTestData():
         # ======================================================================================
         # Mass flow rate is in g/sec
         F_kgmin = np.array(data.get(('EXHAUST_FLOW', 'kg/min')), dtype=np.float64).flatten()
-        raw_data['F'] = uc.uConv(F_kgmin,Tscr, "kg/min to g/s")        # g/sec
+        raw_data['F'] = F_kgmin  # kg/min  #uc.uConv(F_kgmin,Tscr, "kg/min to g/s")        # g/sec
         # =======================================================================================
         # NOx output is in mol/m^3
         NOx = np.array(data.get(('EXH_CW_NOX_COR_U1', 'PPM')), dtype=np.float64).flatten()
-        raw_data['x1'] = uc.uConv(NOx, Tscr, "ppm to mol/m^3")
+        raw_data['x1'] = uc.uConv(NOx, Tscr, "ppm to 10^-3 mol/m^3")
         # =======================================================================================
         # NH3 output is in mol/m^3
         NH3 = np.array(data.get(('EXH_CW_AMMONIA_MEA', 'ppm')), dtype=np.float64).flatten()
-        raw_data['x2'] = uc.uConv(NH3, Tscr, "ppm to mol/m^3")
+        raw_data['x2'] = uc.uConv(NH3, Tscr, "ppm to 10^-3 mol/m^3")
         # =======================================================================================
         # NOx out measured in mol/m^3
         y1 = np.array(data.get(('V_SCM_PPM_SCR_OUT_NOX', 'ppm')), dtype=np.float64).flatten()
-        raw_data['y1'] = uc.uConv(y1, Tscr, "ppm to mol/m^3")
+        raw_data['y1'] = uc.uConv(y1, Tscr, "ppm to 10^-3 mol/m^3")
         # =======================================================================================
         # NOx input is in mol/m^3
         u1 = np.array(data.get(('ENG_CW_NOX_FTIR_COR_U2', 'PPM')), dtype=np.float64).flatten()
-        raw_data['u1'] = uc.uConv(u1, Tscr, "ppm to mol/m^3")
+        raw_data['u1'] = uc.uConv(u1, Tscr, "ppm to 10^-3 mol/m^3")
         # ========================================================================================
         # Urea injection rate is in ml/sec
         u2 = np.array(data.get(('V_UIM_FLM_ESTUREAINJRATE', 'ml/sec')), dtype=np.float64).flatten()
-        raw_data['u2'] = uc.uConv(u2, Tscr, "ml/s to 10^-3 ml/s")
+        raw_data['u2'] = uc.uConv(u2, Tscr, "ml/s to 10 ml/s")
         # u1_sensor = np.array(Data.get(('EONOX_COMP_VALUE', 'ppm'))).flatten()
         # ======================================================================================================
         return raw_data
