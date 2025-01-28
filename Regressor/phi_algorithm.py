@@ -11,7 +11,7 @@ class phiAlg():
         self.dat = dec_dat
         self.ssd = self.dat.ssd
         self.data_len = len(self.ssd['t'])
-        self.W = np.diag([1e-3, 1e-1, 1e-3, 1e-1, 1e-5, 1e-4, 1e-1, 1e1])
+        self.W = np.diag([1e1, 1e1, 1e1, 1e1, 1e1, 1e1, 1e1, 1e1])
 
     # ========================================================
     def get_km_dat(self, k: int) -> km.km_dat:
