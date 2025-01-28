@@ -33,7 +33,7 @@ class RawTestData():
         # ======================================================================================
         # Mass flow rate is in g/sec
         F_kgmin = np.array(data.get(('EXHAUST_FLOW', 'kg/min')), dtype=np.float64).flatten()
-        raw_data['F'] = F_kgmin  # kg/min  #uc.uConv(F_kgmin,Tscr, "kg/min to g/s")        # g/sec
+        raw_data['F'] = uc.uConv(F_kgmin,Tscr, "kg/min to 10 g/s")        # g/sec
         # =======================================================================================
         # NOx output is in mol/m^3
         NOx = np.array(data.get(('EXH_CW_NOX_COR_U1', 'PPM')), dtype=np.float64).flatten()
@@ -53,7 +53,7 @@ class RawTestData():
         # ========================================================================================
         # Urea injection rate is in ml/sec
         u2 = np.array(data.get(('V_UIM_FLM_ESTUREAINJRATE', 'ml/sec')), dtype=np.float64).flatten()
-        raw_data['u2'] = uc.uConv(u2, Tscr, "ml/s to 10 ml/s")
+        raw_data['u2'] = uc.uConv(u2, Tscr, "ml/s to 10^-1 ml/s")
         # u1_sensor = np.array(Data.get(('EONOX_COMP_VALUE', 'ppm'))).flatten()
         # ======================================================================================================
         return raw_data
