@@ -43,6 +43,6 @@ class km_dat():
 # Testing
 # ========================
 if __name__ == '__main__':
-    from dec_dat import *
+    from DataProcessing import decimate_data as dd
     dat = dd.decimatedTestData(0, 0)
     km_data = km_dat(dat.ssd, 5, check_integrity = True)

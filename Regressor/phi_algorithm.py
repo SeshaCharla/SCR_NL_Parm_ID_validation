@@ -13,6 +13,7 @@ class phiAlg():
         self.data_len = len(self.ssd['t'])
         self.W = np.diag([1e-1, 1, 1e-2, 1e-1, 1e-3, 1e-2, 1, 10])
                         # 0   , 1, 2   , 3   , 4   , 5   , 6 , 7
+        self.wy = 10
 
     # ========================================================
     def get_km_dat(self, k: int) -> km.km_dat:
@@ -50,7 +51,7 @@ class phiAlg():
         eta_kp1 = self.ssd["eta"][k+1]
         km = self.get_km_dat(k)
         y_k = ((km.Fk/km.u1k) * eta_kp1) - ((km.Fm/km.u1m) * km.etak)
-        return y_k
+        return self.wy * y_k
 
 # ======================================================================================================================
 # Testing
@@ -69,10 +70,10 @@ if __name__ == "__main__":
             p = phiAlg(dat[age][test])
             plt.figure(10*test)
             plt.plot(p.ssd['t'][start:-1], [p.y(i) for i in range(start, len(p.ssd['t']) - 1)], linewidth = 1, label = p.dat.name)
-            phi_nox_mats = np.concatenate([((p.phi_nox(k)).reshape([1, 8])) for k in range(start, len(p.ssd['t']))], axis = 0)
+            phi_nox_mats = np.concatenate([((p.phi_nox(k)).reshape([1, 8])) for k in range(start, len(p.ssd['t'])-1)], axis = 0)
             for i in range(8):
                 plt.figure(10*test + 2 + i)
-                plt.plot(p.ssd['t'][start:], phi_nox_mats[:, i], linewidth = 1, label = p.dat.name)
+                plt.plot(p.ssd['t'][start:-1], phi_nox_mats[:, i], linewidth = 1, label = p.dat.name)
         # ==================================================================================================================================
         plt.figure(10*test)
         plt.xlabel('Time')
