@@ -10,8 +10,8 @@ dct = dd.load_decimated_test_data_set()
 fig_dpi = 300
 key = 'T'
 
-# lines = [-17.45, -12, -6.55, -1.2, 4.15, 9.8, 15.5]
-lines = [-17.45, -6.55, 4.15, 15.5]
+lines = [-17.45, (-17.45 -6.55)/2,  -6.55, (-6.55 + 2.4)/2, 2.4, (2.4 + 15.5)/2, 15.5]
+# lines = [-17.45, -6.55, 2.4, 15.5]
 
 # Plotting all the Data sets
 plt.figure()
@@ -26,5 +26,5 @@ plt.legend()
 plt.xlabel('Time [s]')
 plt.ylabel(key + uc.units[key])
 plt.title("Temperature plots of Test Cell Data")
-plt.savefig("figs/" + dct[i][j].name + "_ssd_" + key + ".png", dpi=fig_dpi)
-plt.close()
+plt.savefig("figs/" + "hybrid_ssd_" + key + ".png", dpi=fig_dpi)
+plt.show()
