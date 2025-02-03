@@ -1,6 +1,4 @@
 import numpy as np
-from pylint.checkers.utils import is_none
-
 from DataProcessing import decimate_data as dd
 import phi_algorithm as phi_alg
 from DataProcessing.decimate_data import decimatedTestData
@@ -17,11 +15,12 @@ class PhiYmats():
         self.T = self.phiAlg.dat.ssd['T']
         self.data_len = self.phiAlg.data_len
         self.intervals = [(self.T_parts[i], self.T_parts[i+1]) for i in range(len(self.T_parts)-1)]
-        self.Nparts = len(self.intervals)
+        self.Nparts = len(self.intervals)       # = 7
         self.part_keys = [str(self.intervals[i]) for i in range(self.Nparts)]
         self.mat_row_len = self.get_mat_row_len()
         self.Phi_NOx_mats = self.get_Phi_NOx_mats()
         self.Y_NOx_mats = self.get_Y_NOx_mats()
+        self.ranks, self.PE = self.check_PE()
     # ==================================================================================================================
 
     def get_interval_T(self, T: float) -> int:
@@ -85,13 +84,26 @@ class PhiYmats():
         return Y_NOx_mats
     # ==================================================================================================================
 
-    def check_PE(self):
+    def check_PE(self, print_stuff = False):
         """ Checks PE conditions for each of the partitions"""
-
+        ranks = [np.linalg.matrix_rank(Phi) if Phi is not None else None for Phi in self.Phi_NOx_mats.values()]
+        PE = [(np.min(np.linalg.eigvals(Phi.T @ Phi)) >=0) if Phi is not None else None for Phi in self.Phi_NOx_mats.values()]
+        # Showing rank condition and PE results results
+        for i in range(self.Nparts):
+            if ranks[i] is not None:
+                if ranks[i] < self.Nparms:
+                    print(self.phiAlg.dat.name + " data length is not enough for T range: " + self.part_keys[i] + " range (rank < 8)")
+            if PE[i] is not None:
+                if not PE[i]:
+                    print("The PE condition is not satisfied for the " + self.phiAlg.dat.name + " data in the T range: " + self.part_keys[i])
+        if print_stuff:
+            print(ranks)
+            print(PE)
+        return ranks, PE
+    # ==================================================================================================================
 
 # Testing
 if __name__ == "__main__":
     import pprint
-    p = PhiYmats(dd.decimatedTestData(0, 2))
+    p = PhiYmats(dd.decimatedTestData(0, 1))
     T = 15.5
-    pprint.pprint(p.Y_NOx_mats)
