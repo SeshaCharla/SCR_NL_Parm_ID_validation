@@ -1,9 +1,9 @@
 import numpy as np
 from DataProcessing import decimate_data as dd
-from Regressor import phi_algorithm as ph
+from Regressor import phi_mats as ph
 
-class LS_solve():
-    """ Least-squares solver class for test parameter estimation """
+class LS_parms():
+    """ Least-squares solutions for test parameter estimation """
     # ==============================================================
     def __init__(self, dat: dd.decimatedTestData) -> None:
         """ Initiates the solver """

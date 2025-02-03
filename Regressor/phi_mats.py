@@ -16,7 +16,7 @@ class PhiYmats():
         self.data_len = self.phiAlg.data_len
         self.intervals = [(self.T_parts[i], self.T_parts[i+1]) for i in range(len(self.T_parts)-1)]
         self.Nparts = len(self.intervals)       # = 7
-        self.part_keys = [str(self.intervals[i]) for i in range(self.Nparts)]
+        self.part_keys = [str(np.array(self.intervals[i])*10 + 200) for i in range(self.Nparts)]
         self.mat_row_len = self.get_mat_row_len()
         self.Phi_NOx_mats = self.get_Phi_NOx_mats()
         self.Y_NOx_mats = self.get_Y_NOx_mats()
@@ -105,5 +105,5 @@ class PhiYmats():
 # Testing
 if __name__ == "__main__":
     import pprint
-    p = PhiYmats(dd.decimatedTestData(0, 1))
+    p = PhiYmats(dd.decimatedTestData(1, 0))
     T = 15.5
