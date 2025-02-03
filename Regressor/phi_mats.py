@@ -83,10 +83,15 @@ class PhiYmats():
             Y_NOx_mats[self.part_keys[i]][irc[i], :] = y
             irc[i] += 1
         return Y_NOx_mats
+    # ==================================================================================================================
+
+    def check_PE(self):
+        """ Checks PE conditions for each of the partitions"""
 
 
 # Testing
 if __name__ == "__main__":
+    import pprint
     p = PhiYmats(dd.decimatedTestData(0, 2))
     T = 15.5
-    print(p.Y_NOx_mats)
+    pprint.pprint(p.Y_NOx_mats)

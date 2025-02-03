@@ -82,7 +82,6 @@ if __name__ == "__main__":
         plt.title('y in {}'.format(tsts[test]))
         plt.grid(True)
         plt.savefig("figs/y_{}".format(tsts[test]), dpi=fig_dpi)
-        plt.close()
         # ===================================================================
         phi_names = ['_ads_T', '_ads', '_od_T', '_od', '_scr_T', '_scr', 'scr/ads_T', 'scr/ads']
         for i in range(8):
@@ -93,4 +92,5 @@ if __name__ == "__main__":
             plt.title(r'$\phi_{NO_x}$'+'[:, {}] in {}'.format(i, tsts[test]))
             plt.grid(True)
             plt.savefig("figs/phi_{}_{}".format(i, tsts[test]), dpi=fig_dpi)
-            plt.close()
+
+    plt.close('all')
