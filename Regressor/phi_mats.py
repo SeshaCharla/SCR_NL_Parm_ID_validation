@@ -2,6 +2,7 @@ import numpy as np
 from DataProcessing import decimate_data as dd
 import phi_algorithm as phi_alg
 from DataProcessing.decimate_data import decimatedTestData
+from HybridModel import switching_handler as sh
 
 
 class PhiYmats():
@@ -9,13 +10,13 @@ class PhiYmats():
         This class holds  a list of Phi_NOx and Y_NOx matrices for given data
     """
     def __init__(self, dec_dat: decimatedTestData) -> None:
-        self.T_parts = [-17.45, (-17.45 -6.55)/2,  -6.55, (-6.55 + 2.4)/2, 2.4, (2.4 + 15.5)/2, 15.5]
+        self.T_parts = sh.T_parts
         self.phiAlg = phi_alg.phiAlg(dec_dat)
         self.Nparms = 8
         self.T = self.phiAlg.dat.ssd['T']
         self.data_len = self.phiAlg.data_len
-        self.intervals = [(self.T_parts[i], self.T_parts[i+1]) for i in range(len(self.T_parts)-1)]
-        self.Nparts = len(self.intervals)       # = 7
+        self.intervals = sh.intervals
+        self.Nparts = sh.Nparts       # = 7
         self.part_keys = [str(np.array(self.intervals[i])*10 + 200) for i in range(self.Nparts)]
         self.mat_row_len = self.get_mat_row_len()
         self.Phi_NOx_mats = self.get_Phi_NOx_mats()
@@ -23,17 +24,10 @@ class PhiYmats():
         self.ranks, self.PE = self.check_PE()
     # ==================================================================================================================
 
-    def get_interval_T(self, T: float) -> int:
-        """ The intervals are treated as half-open on the higher side i.e., [a, b)"""
-        for i in range(self.Nparts):
-            if self.intervals[i][0] <= T <= self.intervals[i][1]: # this returns the first interval it belongs to unless
-                return i                                            # the last value
-    #===================================================================================================================
-
     def get_interval_k(self, k):
         """ Get the interval of the kth time step """
         Ti = (self.T[k] + self.T[k-1])/2
-        i = self.get_interval_T(Ti)
+        i = sh.get_interval_T(Ti)
         return i
     # ==================================================================================================================
 
@@ -86,12 +80,12 @@ class PhiYmats():
 
     def check_PE(self, print_stuff = False):
         """ Checks PE conditions for each of the partitions"""
-        ranks = [np.linalg.matrix_rank(Phi) if Phi is not None else None for Phi in self.Phi_NOx_mats.values()]
+        ranks = [(np.linalg.matrix_rank(Phi)>=self.Nparms) if Phi is not None else None for Phi in self.Phi_NOx_mats.values()]
         PE = [(np.min(np.linalg.eigvals(Phi.T @ Phi)) >=0) if Phi is not None else None for Phi in self.Phi_NOx_mats.values()]
-        # Showing rank condition and PE results results
+        # Showing rank condition and PE results
         for i in range(self.Nparts):
             if ranks[i] is not None:
-                if ranks[i] < self.Nparms:
+                if not ranks[i]:
                     print(self.phiAlg.dat.name + " data length is not enough for T range: " + self.part_keys[i] + " range (rank < 8)")
             if PE[i] is not None:
                 if not PE[i]:
