@@ -9,3 +9,9 @@ def get_interval_T(T: float) -> int:
     for i in range(Nparts):
         if intervals[i][0] <= T <= intervals[i][1]:  # this returns the first interval it belongs to unless
             return i                                           # the last value
+
+
+if __name__ == '__main__':
+    print("Intervals: ", intervals)
+    Ti = 8.95
+    print("Interval of Ti={} is ".format(Ti) + str(get_interval_T(Ti)) + ": " + str(intervals[get_interval_T(Ti)]))

@@ -15,6 +15,12 @@ class LS_parms():
         self.name = self.phm.phiAlg.dat.name
         self.Nparts = self.phm.Nparts
         self.Nparms = self.phm.Nparms
+        self.ub = np.Inf*np.ones(self.Nparms)
+        self.lb = -np.Inf*np.ones(self.Nparms)
+        for i in range(self.Nparms):
+            if i%2 == 0:
+                self.lb[i] = 0
+        self.bounds = [self.lb, self.ub]
         self.thetas = self.get_theta_dict()
 
     # =======================================================
@@ -27,7 +33,8 @@ class LS_parms():
                 thetas[self.keys[i]] = None
             else:
                 sol = lsq_linear(self.phm.Phi_NOx_mats[self.keys[i]],
-                                 (np.array(self.phm.Y_NOx_mats[self.keys[i]])).flatten())
+                                 (np.array(self.phm.Y_NOx_mats[self.keys[i]])).flatten(),
+                                 self.bounds)
                 theta_scaled = np.matrix(sol.x)
                 thetas[self.keys[i]] = self.Wy @ theta_scaled.T
         return thetas
