@@ -5,13 +5,13 @@ matplotlib.use('tkAgg')
 #
 from DataProcessing import decimate_data as dd
 from DataProcessing import unit_convs as uc
+import switching_handler as sh
 
 dct = dd.load_decimated_test_data_set()
 fig_dpi = 300
 key = 'T'
 
-lines = [-17.45, (-17.45 -6.55)/2,  -6.55, (-6.55 + 2.4)/2, 2.4, (2.4 + 15.5)/2, 15.5]
-# lines = [-17.45, -6.55, 2.4, 15.5]
+lines = sh.T_parts
 
 # Plotting all the Data sets
 plt.figure()
