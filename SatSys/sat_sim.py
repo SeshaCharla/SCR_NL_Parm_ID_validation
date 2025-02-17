@@ -12,6 +12,10 @@ class sat_sim:
         self.dat = dec_dat
         self.theta_sat = ths.theta_sat(self.dat)
         self.eta_sim = self.sim_eta()
+<<<<<<< HEAD
+=======
+        self.data_len = self.theta_sat.cAb.data_len
+>>>>>>> 6aaa49e5140c6c6d05237e45bc696bd41adac058
     # ===============================================================================
 
     def phi_sat(self, k) -> np.ndarray:
@@ -21,5 +25,14 @@ class sat_sim:
         T_k = self.dat.ssd['T'][k]
         phi_k = phiT.phi_T(T_k)
         return (u1_k/F_k)*phi_k
+<<<<<<< HEAD
+=======
+    # ============================================================
+
+    def sim_eta(self):
+        """ Simulate the eta from data """
+        eta_sim = np.zeros(self.data_len)
+        for k in range(self.data_len):
+>>>>>>> 6aaa49e5140c6c6d05237e45bc696bd41adac058
 
 
