@@ -1,6 +1,5 @@
 import numpy as np
 from DataProcessing import decimate_data as dd
-from DataProcessing.decimate_data import decimatedTestData
 from HybridModel import switching_handler as sh
 from temperature import phiT
 
@@ -9,7 +8,7 @@ class cAb_mats():
     """
         Container for the cost and constraint matrices for the linear program under various temperature bounds
     """
-    def __init__(self, dec_dat: decimatedTestData) -> None:
+    def __init__(self, dec_dat: dd.decimatedTestData) -> None:
         self.dat = dec_dat
         self.ord = 1
         self.Nparms = self.ord + 1
