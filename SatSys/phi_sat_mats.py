@@ -10,8 +10,7 @@ class cAb_mats():
     """
     def __init__(self, dec_dat: dd.decimatedTestData) -> None:
         self.dat = dec_dat
-        self.ord = 1
-        self.Nparms = self.ord + 1
+        self.Nparms = phiT.T_ord + 1
         self.T = self.dat.ssd['T']
         self.data_len = len(self.T)
         self.row_len = self.get_row_len()
@@ -68,7 +67,7 @@ class cAb_mats():
             u1_k = self.dat.ssd['u1'][k]
             F_k = self.dat.ssd['F'][k]
             T_k = self.dat.ssd['T'][k]
-            A_mats[sh.part_keys[i]][irc[i], :] = (u1_k/F_k) * (phiT.phi_T(T_k, self.ord)).flatten()
+            A_mats[sh.part_keys[i]][irc[i], :] = (u1_k/F_k) * (phiT.phi_T(T_k)).flatten()
             irc[i] += 1
         return A_mats
     # ==================================================================================================================
