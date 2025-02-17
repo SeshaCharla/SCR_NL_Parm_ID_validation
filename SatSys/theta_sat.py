@@ -2,6 +2,7 @@ from scipy.optimize import linprog
 from DataProcessing import decimate_data as dd
 from HybridModel import switching_handler as sh
 import phi_sat_mats as psm
+import numpy as np
 
 
 class theta_sat:
@@ -11,6 +12,7 @@ class theta_sat:
         """ Loads all the data and solves the linear program in each case """
         self.dat  = dec_dat
         self.cAb = psm.cAb_mats(self.dat)
+        self.Nparms = self.cAb.Nparms
         self.thetas = self.get_thetas()
     # =========================================================================
 
