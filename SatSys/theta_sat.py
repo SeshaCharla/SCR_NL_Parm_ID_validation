@@ -5,6 +5,7 @@ from HybridModel import switching_handler as sh
 from temperature import phiT
 import phi_sat_mats as psm
 
+
 class theta_sat:
     """ Class holding the saturated system parameters for the temperature ranges """
 
@@ -24,7 +25,7 @@ class theta_sat:
                 A = self.cAb.A_mats[key]
                 b = self.cAb.b_vecs[key]
                 sol = linprog(c, -A, -b, bounds=(None, None))
-                print(sol)
+                # print(sol)
                 thetas[key] = sol.x
             else:
                 thetas[key] = None
@@ -34,6 +35,7 @@ class theta_sat:
 
 # Testing
 if __name__ == '__main__':
-    dat = dd.decimatedTestData(0, 2)
+    import pprint as pp
+    dat = dd.decimatedTestData(1, 0)
     thetas = theta_sat(dat)
-    print(thetas.thetas)
+    pp.pprint(thetas.thetas)
