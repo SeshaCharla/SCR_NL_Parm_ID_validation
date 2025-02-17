@@ -7,7 +7,7 @@ T_parts_w = [-17.45, -6.55, 2.4, 15.5]
 # No Partitions
 T_parts_n = [-17.45, 15.5]
 # By default T_parts is used. We need to replace with a wider partions or no partition, T_parts needed to be reassigned.
-# T_parts = T_parts_n
+T_parts = T_parts_w
 
 intervals = [(T_parts[i], T_parts[i+1]) for i in range(len(T_parts)-1)]
 Nparts = len(intervals)

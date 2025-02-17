@@ -1,7 +1,7 @@
 import  numpy as np
 
 
-T_ord = 1
+T_ord = 2
 def phi_T(T: float, ord: int =T_ord) -> np.ndarray:
     """ Returns phi(T) for the given polynomial order"""
     T_poly = [T**n for n in range(ord, -1, -1)]

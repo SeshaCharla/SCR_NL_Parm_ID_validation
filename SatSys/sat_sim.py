@@ -42,7 +42,7 @@ if __name__ == "__main__":
     import matplotlib
     matplotlib.use('TkAgg')
 
-    sim = sat_sim(dd.decimatedTestData(1, 2))
+    sim = sat_sim(dd.decimatedTestData(1, 1))
 
     plt.figure()
     plt.plot(sim.dat.ssd['t'], sim.dat.ssd['eta'], label='eta from data set')
