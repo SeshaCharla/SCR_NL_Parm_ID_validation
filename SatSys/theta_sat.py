@@ -1,8 +1,6 @@
 from scipy.optimize import linprog
-import numpy as np
 from DataProcessing import decimate_data as dd
 from HybridModel import switching_handler as sh
-from temperature import phiT
 import phi_sat_mats as psm
 
 
