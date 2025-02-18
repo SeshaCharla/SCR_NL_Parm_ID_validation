@@ -8,7 +8,7 @@ class cAb_mats():
     """
         Container for the cost and constraint matrices for the linear program under various temperature bounds
     """
-    def __init__(self, dec_dat: dd.decimatedTestData, T_ord:int = 1, T_parts:list = sh.T_narrow) -> None:
+    def __init__(self, dec_dat: dd.decimatedTestData, T_ord:int , T_parts:list ) -> None:
         self.dat = dec_dat
         self.T_ord = T_ord
         self.swh = sh.switch_handle(T_parts)

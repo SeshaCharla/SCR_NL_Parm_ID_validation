@@ -4,6 +4,7 @@ import numpy as np
 T_narrow = [-17.45, (-17.45 -6.55)/2,  -6.55, (-6.55 + 2.4)/2, 2.4, (2.4 + 15.5)/2, 15.5]
 T_wide = [-17.45, -6.55, 2.4, 15.5]
 T_none = [-17.45, 15.5]
+T_hl = [-17.45, -6.55, 15.5]
 
 class switch_handle:
     """ Class to handle switching based on temperature """

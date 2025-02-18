@@ -7,7 +7,7 @@ from temperature import phiT
 
 class sat_sim:
     """ Class simulating the saturated system """
-    def __init__(self, dec_dat: dd.decimatedTestData, T_ord: int = 1, T_parts: list = sh.T_narrow):
+    def __init__(self, dec_dat: dd.decimatedTestData, T_ord: int , T_parts: list ):
         """ Loads the data and generates the simulation of the saturated system """
         self.dat = dec_dat
         self.T_ord = T_ord
@@ -45,11 +45,24 @@ if __name__ == "__main__":
     import matplotlib
     matplotlib.use('TkAgg')
 
-    sim = sat_sim(dd.decimatedTestData(1, 0))
+    dat = dd.decimatedTestData(0, 2)
+    sim_0 = sat_sim(dat , T_ord=0, T_parts=sh.T_none)
+    sim_1 = sat_sim(dat , T_ord=1, T_parts=sh.T_none)
+    sim_1w = sat_sim(dat, T_ord=1, T_parts=sh.T_wide)
+    sim_1n = sat_sim(dat, T_ord=1, T_parts=sh.T_narrow)
+    sim_2 = sat_sim(dat , T_ord=2, T_parts=sh.T_none)
+    sim_3 = sat_sim(dat, T_ord=3, T_parts=sh.T_none)
 
     plt.figure()
-    plt.plot(sim.dat.ssd['t'], sim.dat.ssd['eta'], label='eta from data set')
-    plt.plot(sim.dat.ssd['t'], sim.eta_sim, label='eta_saturated')
+    plt.plot(dat.ssd['t'], dat.ssd['eta'], label='eta from data set')
+    # plt.plot(dat.ssd['t'], sim_0.eta_sim, label='eta_saturated_0')
+    # plt.plot(dat.ssd['t'], sim_1.eta_sim, label='eta_saturated_1_none')
+    # plt.plot(dat.ssd['t'], sim_1w.eta_sim, label='eta_saturated_1_wide')
+    # plt.plot(dat.ssd['t'], sim_1n.eta_sim, label='eta_saturated_1_narrow')
+    # plt.plot(dat.ssd['t'], sim_2.eta_sim, label='eta_saturated_2')
+    plt.plot(dat.ssd['t'], sim_3.eta_sim, label='eta_saturated_3')
     plt.legend()
     plt.grid()
     plt.show()
+
+    pp.pprint(sim_3.theta_sat.thetas)
