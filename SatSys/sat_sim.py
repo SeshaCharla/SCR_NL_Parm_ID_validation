@@ -5,7 +5,7 @@ from HybridModel import switching_handler as sh
 from temperature import phiT
 
 
-class sat_sim:
+class sat_eta:
     """ Class simulating the saturated system """
     def __init__(self, dec_dat: dd.decimatedTestData, T_ord: int , T_parts: list ):
         """ Loads the data and generates the simulation of the saturated system """
@@ -16,6 +16,7 @@ class sat_sim:
         self.swh = self.theta_sat.swh
         self.data_len = self.theta_sat.cAb.data_len
         self.eta_sim = self.sim_eta()
+        self.str_frac = self.dat.ssd['eta']/self.eta_sim
 
     # ===============================================================================
 
@@ -36,7 +37,7 @@ class sat_sim:
             eta_sim[k+1] = ((self.phi_sat(k)).T @ self.theta_sat.thetas[self.swh.part_keys[i]])[0, 0]
         eta_sim[0] = eta_sim[1]
         return eta_sim
-
+    # =================================================================================================
 
 # Testing
 if __name__ == "__main__":
@@ -44,25 +45,28 @@ if __name__ == "__main__":
     import matplotlib.pyplot as plt
     import matplotlib
     matplotlib.use('TkAgg')
+    from DataProcessing import unit_convs as uc
 
-    dat = dd.decimatedTestData(0, 2)
-    sim_0 = sat_sim(dat , T_ord=0, T_parts=sh.T_none)
-    sim_1 = sat_sim(dat , T_ord=1, T_parts=sh.T_none)
-    sim_1w = sat_sim(dat, T_ord=1, T_parts=sh.T_wide)
-    sim_1n = sat_sim(dat, T_ord=1, T_parts=sh.T_narrow)
-    sim_2 = sat_sim(dat , T_ord=2, T_parts=sh.T_none)
-    sim_3 = sat_sim(dat, T_ord=3, T_parts=sh.T_none)
+    dat = dd.decimatedTestData(0, 1)
+    sim = sat_eta(dat, T_ord=2, T_parts=sh.T_hl)
+
+    plt.figure()
+    plt.plot(dat.ssd['t'], sim.str_frac, label="Storage fraction")
+    plt.legend()
+    plt.grid()
+    plt.title(dat.name)
+    plt.xlabel('t [s]')
+    plt.ylabel('Storage fraction (ratio)')
 
     plt.figure()
     plt.plot(dat.ssd['t'], dat.ssd['eta'], label='eta from data set')
-    # plt.plot(dat.ssd['t'], sim_0.eta_sim, label='eta_saturated_0')
-    # plt.plot(dat.ssd['t'], sim_1.eta_sim, label='eta_saturated_1_none')
-    # plt.plot(dat.ssd['t'], sim_1w.eta_sim, label='eta_saturated_1_wide')
-    # plt.plot(dat.ssd['t'], sim_1n.eta_sim, label='eta_saturated_1_narrow')
-    # plt.plot(dat.ssd['t'], sim_2.eta_sim, label='eta_saturated_2')
-    plt.plot(dat.ssd['t'], sim_3.eta_sim, label='eta_saturated_3')
+    plt.plot(dat.ssd['t'], sim.eta_sim, label='eta_saturated')
     plt.legend()
     plt.grid()
-    plt.show()
+    plt.title(dat.name)
+    plt.xlabel('t [s]')
+    plt.ylabel('eta' + uc.units['eta'])
 
-    pp.pprint(sim_3.theta_sat.thetas)
+    plt.show()
+    print(dat.name)
+    pp.pprint(sim.theta_sat.thetas)
