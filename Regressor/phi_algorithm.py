@@ -1,6 +1,7 @@
 import numpy as np
 import km_data as km
 from DataProcessing import decimate_data as dd
+from temperature import  phiT
 # ===================
 
 class phiAlg():
@@ -11,9 +12,9 @@ class phiAlg():
         self.dat = dec_dat
         self.ssd = self.dat.ssd
         self.data_len = len(self.ssd['t'])
-        self.W = np.diag([1e-1, 1, 1e-2, 1e-1, 1e-3, 1e-2, 1, 10])
-                        # 0   , 1, 2   , 3   , 4   , 5   , 6 , 7
-        self.wy = 10
+        self.T_ord_k = 1
+        self.T_ord_kGamma = 2
+        self.Nparms = 3*(self.T_ord_k + 1) + (self.T_ord_kGamma + 1)
 
     # ========================================================
     def get_km_dat(self, k: int) -> km.km_dat:
@@ -29,17 +30,17 @@ class phiAlg():
         # ===========================================================
         km = self.get_km_dat(k)
         x1_u1_1 = (km.x1k/km.u1m) - 1
-        phi_k = np.matrix([[km.Tk], [1]])
-        phi_m = np.matrix([[km.Tm], [1]])
+        phi_k = phiT.phi_T(km.Tk, self.T_ord_k)
+        phi_m = phiT.phi_T(km.Tm, self.T_ord_k)
         phi_nox_1 = x1_u1_1 * km.u2m * phi_m
         phi_nox_2 = x1_u1_1 * km.Fm * phi_m
         phi_nox_3 = -km.etak * km.Fm * phi_k
-        phi_nox_4 = (km.u2m/km.Fm) * phi_k
+        phi_nox_4 = (km.u2m/km.Fm) * phiT.phi_T(km.Tm, self.T_ord_kGamma)
         phi_nox_k = np.concatenate([phi_nox_1,
                                     phi_nox_2,
                                     phi_nox_3,
                                     phi_nox_4], axis=0)
-        return self.W @ phi_nox_k
+        return phi_nox_k
 
     # ======================================================================
     def y(self, k: int) -> float:
@@ -51,7 +52,7 @@ class phiAlg():
         eta_kp1 = self.ssd["eta"][k+1]
         km = self.get_km_dat(k)
         y_k = ((km.Fk/km.u1k) * eta_kp1) - ((km.Fm/km.u1m) * km.etak)
-        return self.wy * y_k
+        return y_k
 
 # ======================================================================================================================
 # Testing
@@ -68,14 +69,14 @@ if __name__ == "__main__":
     for test in range(3):
         for age in range(2):
             p = phiAlg(dat[age][test])
-            plt.figure(10*test)
+            plt.figure(11*test)
             plt.plot(p.ssd['t'][start:-1], [p.y(i) for i in range(start, len(p.ssd['t']) - 1)], linewidth = 1, label = p.dat.name)
-            phi_nox_mats = np.concatenate([((p.phi_nox(k)).reshape([1, 8])) for k in range(start, len(p.ssd['t'])-1)], axis = 0)
-            for i in range(8):
-                plt.figure(10*test + 2 + i)
+            phi_nox_mats = np.concatenate([((p.phi_nox(k)).reshape([1, p.Nparms])) for k in range(start, len(p.ssd['t'])-1)], axis = 0)
+            for i in range(p.Nparms):
+                plt.figure(11*test + 2 + i)
                 plt.plot(p.ssd['t'][start:-1], phi_nox_mats[:, i], linewidth = 1, label = p.dat.name)
         # ==================================================================================================================================
-        plt.figure(10*test)
+        plt.figure(11*test)
         plt.xlabel('Time')
         plt.ylabel(r'$y_{NO_x}(k)$')
         plt.legend()
@@ -83,9 +84,12 @@ if __name__ == "__main__":
         plt.grid(True)
         plt.savefig("figs/y_{}".format(tsts[test]), dpi=fig_dpi)
         # ===================================================================
-        phi_names = ['_ads_T', '_ads', '_od_T', '_od', '_scr_T', '_scr', 'scr/ads_T', 'scr/ads']
-        for i in range(8):
-            plt.figure(10*test + 2 + i)
+        phi_names = ['_ads_T', '_ads',
+                     '_od_T', '_od',
+                     '_scr_T', '_scr',
+                     'scr/ads_T^2', 'scr/ads_T', 'scr/ads']
+        for i in range(p.Nparms):
+            plt.figure(11*test + 2 + i)
             plt.xlabel('Time')
             plt.ylabel(r'$\phi_{NO_x}$'+'{}'.format(phi_names[i]))
             plt.legend()

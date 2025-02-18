@@ -7,12 +7,13 @@ from temperature import  phiT
 class phiSatAlg():
     """ Class holding the methods and data for phi algorithm for kth time step under saturation case"""
     #==============================================================================
-    def __init__(self, dec_dat: dd.decimatedTestData, T_ord: int) -> None:
+    def __init__(self, dec_dat: dd.decimatedTestData) -> None:
         """ Initiates the object which holds the data set """
         self.dat = dec_dat
         self.ssd = self.dat.ssd
         self.data_len = len(self.ssd['t'])
-        self.T_ord = T_ord
+        self.T_ord = 2      # T_ord Gamma
+        self.Nparms = self.T_ord + 1
     # =========================================
 
     def phi_sat_nox(self, k: int) -> np.ndarray:
@@ -26,7 +27,6 @@ class phiSatAlg():
         T_k = self.ssd['T'][k]
         phi_sat_k = (u1_k/F_k) * phiT.phi_T(T_k, self.T_ord)
         return phi_sat_k
-
     # ======================================================================
 
     def y(self, k: int) -> float:
@@ -53,29 +53,15 @@ if __name__ == "__main__":
     for test in range(3):
         for age in range(2):
             p = phiSatAlg(dat[age][test])
-            plt.figure(10*test)
-            plt.plot(p.ssd['t'][start:-1], [p.y(i) for i in range(start, len(p.ssd['t']) - 1)], linewidth = 1, label = p.dat.name)
-            phi_nox_mats = np.concatenate([((p.phi_nox(k)).reshape([1, 8])) for k in range(start, len(p.ssd['t'])-1)], axis = 0)
-            for i in range(8):
-                plt.figure(10*test + 2 + i)
-                plt.plot(p.ssd['t'][start:-1], phi_nox_mats[:, i], linewidth = 1, label = p.dat.name)
-        # ==================================================================================================================================
-        plt.figure(10*test)
-        plt.xlabel('Time')
-        plt.ylabel(r'$y_{NO_x}(k)$')
-        plt.legend()
-        plt.title('y in {}'.format(tsts[test]))
-        plt.grid(True)
-        plt.savefig("figs/y_{}".format(tsts[test]), dpi=fig_dpi)
-        # ===================================================================
-        phi_names = ['_ads_T', '_ads', '_od_T', '_od', '_scr_T', '_scr', 'scr/ads_T', 'scr/ads']
-        for i in range(8):
-            plt.figure(10*test + 2 + i)
-            plt.xlabel('Time')
-            plt.ylabel(r'$\phi_{NO_x}$'+'{}'.format(phi_names[i]))
-            plt.legend()
-            plt.title(r'$\phi_{NO_x}$'+'[:, {}] in {}'.format(i, tsts[test]))
-            plt.grid(True)
-            plt.savefig("figs/phi_{}_{}".format(i, tsts[test]), dpi=fig_dpi)
+            plt.figure()
+            plt.plot(p.ssd['t'][start:p.data_len-1], [p.y(k) for k in range(start, p.data_len-1)], linewidth = 1, label = p.dat.name)
+            phi_sat = [p.phi_sat_nox(k) for k in range(start, p.data_len - 1)]
+            plt.figure()
+            for j in range(p.Nparms-1):
+                plt.plot(p.ssd['t'][start:p.data_len-1],
+                         [phi_sat[k][j, 0] for k in range(len(phi_sat))],
+                         linewidth = 1, label = p.dat.name)
 
-    plt.close('all')
+
+        # ==================================================================================================================================
+    plt.show()
