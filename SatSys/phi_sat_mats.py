@@ -8,9 +8,11 @@ class cAb_mats():
     """
         Container for the cost and constraint matrices for the linear program under various temperature bounds
     """
-    def __init__(self, dec_dat: dd.decimatedTestData) -> None:
+    def __init__(self, dec_dat: dd.decimatedTestData, T_ord:int = 1, T_parts:list = sh.T_narrow) -> None:
         self.dat = dec_dat
-        self.Nparms = phiT.T_ord + 1
+        self.T_ord = T_ord
+        self.swh = sh.switch_handle(T_parts)
+        self.Nparms = self.T_ord + 1
         self.T = self.dat.ssd['T']
         self.data_len = len(self.T)
         self.row_len = self.get_row_len()
@@ -20,13 +22,13 @@ class cAb_mats():
     # ==================================================================================================================
     def get_interval_k(self, k):
         """ Get the interval of the kth time step """
-        i = sh.get_interval_T(self.T[k])
+        i = self.swh.get_interval_T(self.T[k])
         return i
     # ==================================================================================================================
 
     def get_row_len(self) -> np.ndarray:
         """ The row length of each of the regression matrices of the switched system """
-        mat_sizes = np.zeros(sh.Nparts, dtype=int)
+        mat_sizes = np.zeros(self.swh.Nparts, dtype=int)
         for k in range(1, self.data_len-1):
             i = self.get_interval_k(k)
             mat_sizes[i] += 1
@@ -37,16 +39,16 @@ class cAb_mats():
         """ Returns a dictionary of b vectors for each of the partitions """
         # Creating the dictionary with zero matrices ============================================
         b_vecs = dict()
-        for i in range(sh.Nparts):
+        for i in range(self.swh.Nparts):
             if self.row_len[i] == 0:
-                b_vecs[sh.part_keys[i]] = None
+                b_vecs[self.swh.part_keys[i]] = None
             else:
-                b_vecs[sh.part_keys[i]] = np.zeros(self.row_len[i])
+                b_vecs[self.swh.part_keys[i]] = np.zeros(self.row_len[i])
         # ========================================================================================
-        irc = np.zeros(sh.Nparts, dtype=int)     # interval row counter
+        irc = np.zeros(self.swh.Nparts, dtype=int)     # interval row counter
         for k in range(1, self.data_len-1):
             i = self.get_interval_k(k)
-            b_vecs[sh.part_keys[i]][irc[i]] = self.dat.ssd['eta'][k+1]
+            b_vecs[self.swh.part_keys[i]][irc[i]] = self.dat.ssd['eta'][k+1]
             irc[i] += 1
         return b_vecs
     # ==================================================================================================================
@@ -55,19 +57,19 @@ class cAb_mats():
         """ Returns a dictionary of A matrices for each of the partitions """
         # Creating a dictionary with zero matrices
         A_mats = dict()
-        for i in range(sh.Nparts):
+        for i in range(self.swh.Nparts):
             if self.row_len[i] == 0:
-                A_mats[sh.part_keys[i]] = None
+                A_mats[self.swh.part_keys[i]] = None
             else:
-                A_mats[sh.part_keys[i]] = np.zeros([self.row_len[i], self.Nparms])
+                A_mats[self.swh.part_keys[i]] = np.zeros([self.row_len[i], self.Nparms])
         # ==========================================================================
-        irc = np.zeros(sh.Nparts, dtype=int)
+        irc = np.zeros(self.swh.Nparts, dtype=int)
         for k in range(1, self.data_len-1):
             i = self.get_interval_k(k)
             u1_k = self.dat.ssd['u1'][k]
             F_k = self.dat.ssd['F'][k]
             T_k = self.dat.ssd['T'][k]
-            A_mats[sh.part_keys[i]][irc[i], :] = (u1_k/F_k) * (phiT.phi_T(T_k)).flatten()
+            A_mats[self.swh.part_keys[i]][irc[i], :] = (u1_k/F_k) * (phiT.phi_T(T_k, self.T_ord)).flatten()
             irc[i] += 1
         return A_mats
     # ==================================================================================================================
@@ -75,13 +77,12 @@ class cAb_mats():
     def get_c(self) -> dict[str, np.ndarray]:
         """ Returns the c vectors for the linear programming """
         c_vecs = dict()
-        for key in sh.part_keys:
+        for key in self.swh.part_keys:
             if self.A_mats[key] is not None:
                 c_vecs[key] = np.sum(self.A_mats[key], axis=0)
             else:
                 c_vecs[key] = None
         return c_vecs
-
 
 
 # Testing

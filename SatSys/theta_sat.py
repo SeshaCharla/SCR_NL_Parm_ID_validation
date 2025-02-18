@@ -8,10 +8,13 @@ import numpy as np
 class theta_sat:
     """ Class holding the saturated system parameters for the temperature ranges """
 
-    def __init__(self, dec_dat: dd.decimatedTestData):
+    def __init__(self, dec_dat: dd.decimatedTestData, T_ord: int = 1, T_parts: list = sh.T_narrow ):
         """ Loads all the data and solves the linear program in each case """
         self.dat  = dec_dat
-        self.cAb = psm.cAb_mats(self.dat)
+        self.T_ord = T_ord
+        self.T_parts = T_parts
+        self.cAb = psm.cAb_mats(self.dat, self.T_ord, self.T_parts)
+        self.swh = self.cAb.swh
         self.Nparms = self.cAb.Nparms
         self.thetas = self.get_thetas()
     # =========================================================================
@@ -19,7 +22,7 @@ class theta_sat:
     def get_thetas(self):
         """ Calculates the solution for each hybrid model case """
         thetas = dict()
-        for key in sh.part_keys:
+        for key in self.swh.part_keys:
             if self.cAb.c_vecs[key] is not None:
                 c = self.cAb.c_vecs[key]
                 A = self.cAb.A_mats[key]

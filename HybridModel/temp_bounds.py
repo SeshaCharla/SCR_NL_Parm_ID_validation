@@ -11,7 +11,7 @@ dct = dd.load_decimated_test_data_set()
 fig_dpi = 300
 key = 'T'
 
-lines = sh.T_parts
+lines = (sh.switch_handle(sh.T_narrow)).T_parts
 
 # Plotting all the Data sets
 plt.figure()
