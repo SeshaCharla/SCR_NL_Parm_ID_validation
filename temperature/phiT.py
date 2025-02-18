@@ -1,8 +1,6 @@
 import  numpy as np
 
-
-T_ord = 2
-def phi_T(T: float, ord: int =T_ord) -> np.ndarray:
+def phi_T(T: float, ord: int) -> np.ndarray:
     """ Returns phi(T) for the given polynomial order"""
     T_poly = [T**n for n in range(ord, -1, -1)]
     phiT = np.matrix(T_poly).T
@@ -10,4 +8,5 @@ def phi_T(T: float, ord: int =T_ord) -> np.ndarray:
 
 #===
 if __name__ == "__main__":
-    print(phi_T(5, 2))
+    T_ord = 5
+    print(phi_T(5, T_ord))

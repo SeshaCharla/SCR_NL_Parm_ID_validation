@@ -36,6 +36,6 @@ class theta_sat:
 # Testing
 if __name__ == '__main__':
     import pprint as pp
-    dat = dd.decimatedTestData(1, 2)
+    dat = dd.decimatedTestData(0, 2)
     thetas = theta_sat(dat)
     pp.pprint(thetas.thetas)
