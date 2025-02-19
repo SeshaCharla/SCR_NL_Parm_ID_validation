@@ -16,7 +16,7 @@ class phiSatAlg():
         self.Nparms = self.T_ord + 1
     # =========================================
 
-    def phi_sat_nox(self, k: int) -> np.ndarray:
+    def phi_nox(self, k: int) -> np.ndarray:
         """ phi_sat_nox(k) =  """
         # Gaurd conditions for k ====================================
         if (k < 1) or (k >= self.data_len - 1):

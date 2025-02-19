@@ -1,8 +1,10 @@
 import numpy as np
 from DataProcessing import decimate_data as dd
 import phi_algorithm as phi_alg
+import phi_sat_algorithm as phi_sat_alg
 from DataProcessing.decimate_data import decimatedTestData
 from HybridModel import switching_handler as sh
+from SatSys import sat_sim
 
 
 class PhiYmats():
@@ -10,52 +12,79 @@ class PhiYmats():
         This class holds  a list of Phi_NOx and Y_NOx matrices for given data
     """
     def __init__(self, dec_dat: decimatedTestData) -> None:
-        self.T_parts = sh.T_parts
-        self.phiAlg = phi_alg.phiAlg(dec_dat)
-        self.Nparms = 8
-        self.T = self.phiAlg.dat.ssd['T']
-        self.data_len = self.phiAlg.data_len
-        self.intervals = sh.intervals
-        self.Nparts = sh.Nparts       # = 7
-        self.part_keys = [str(np.array(self.intervals[i])*10 + 200) for i in range(self.Nparts)]
+        self.dat = dec_dat
+        self.T_parts = sh.T_hl
+        self.swh = sh.switch_handle(self.T_parts)
+        self.eta_sat = (sat_sim.sat_eta(self.dat, T_ord=2, T_parts=self.T_parts)).eta_sim
+        # =================================================================================
+        self.T = self.dat.ssd['T']
+        self.data_len = len(self.T)
+        # ==========================
+        self.st_keys = ['Sat', 'uSat']
+        self.alg = dict()
+        self.alg['uSat'] = phi_alg.phiAlg(self.dat)
+        self.alg['Sat'] = phi_sat_alg.phiSatAlg(self.dat)
         self.mat_row_len = self.get_mat_row_len()
         self.Phi_NOx_mats = self.get_Phi_NOx_mats()
-        self.Y_NOx_mats = self.get_Y_NOx_mats()
-        self.ranks, self.PE = self.check_PE()
+        # self.Y_NOx_mats = self.get_Y_NOx_mats()
+        # self.ranks, self.PE = self.check_PE()
     # ==================================================================================================================
+
+    def check_saturation(self, k:int) -> str:
+        """ True if the kth eta is from saturation or not """
+        diff = np.abs(self.eta_sat[k] - self.dat.ssd['eta'][k])
+        if (diff <= 2):
+            return 'Sat'
+        else:
+            return 'uSat'
+    #=============================================================
 
     def get_interval_k(self, k):
         """ Get the interval of the kth time step """
         Ti = (self.T[k] + self.T[k-1])/2
-        i = sh.get_interval_T(Ti)
+        i = self.swh.get_interval_T(Ti)
         return i
     # ==================================================================================================================
 
-    def get_mat_row_len(self) -> np.ndarray:
+    def get_mat_row_len(self) -> dict[str, dict[str, int]]:
         """ The row length of each of the regression matrices of the switched system """
-        mat_sizes = np.zeros(self.Nparts, dtype=int)
+        mat_sizes = dict()
+        for key_T in self.swh.part_keys:
+            mat_sizes[key_T] = dict()
+            for key_sat in self.st_keys:
+                mat_sizes[key_T][key_sat] = 0
         for k in range(1, self.data_len-1):
-            i = self.get_interval_k(k)
-            mat_sizes[i] += 1
+            key_T = self.swh.part_keys[self.get_interval_k(k)]
+            key_sat = self.check_saturation(k)
+            mat_sizes[key_T][key_sat] += 1
         return mat_sizes
     # ==================================================================================================================
 
-    def get_Phi_NOx_mats(self) -> dict[str, np.ndarray]:
-        """ Returns a dictionary of Phi_NOx matrices for each of the partitions """
-        # Creating the dictionary with zero matrices ============================================
+    def get_Phi_NOx_mats(self) -> dict[str, dict[str, np.ndarray]]:
+        """ Returns a dictionary of Phi_NOx matrices for each of the partitions and cases """
+        # Creating the nested dictionary with zero matrices ============================================
         PhiNOxMats = dict()
-        for i in range(self.Nparts):
-            if self.mat_row_len[i] == 0:
-                PhiNOxMats[self.part_keys[i]] = None
-            else:
-                PhiNOxMats[self.part_keys[i]] = np.matrix(np.zeros([self.mat_row_len[i], self.Nparms]))
-        # ========================================================================================
-        irc = np.zeros(self.Nparts, dtype=int)     # interval row counter
+        for key_T in self.swh.part_keys:
+            PhiNOxMats[key_T] = dict()
+            for key_sat in self.st_keys:
+                if self.mat_row_len[key_T][key_sat] != 0:
+                    PhiNOxMats[key_T][key_sat] = np.zeros([self.mat_row_len[key_T][key_sat], self.alg[key_sat].Nparms])
+                else:
+                    PhiNOxMats[key_T][key_sat] = None
+        # ==========================================================================================================
+        rc = dict()     # row_count dictionary
+        for key_T in self.swh.part_keys:
+            rc[key_T] = dict()
+            for key_sat in self.st_keys:
+                rc[key_T][key_sat] = 0
+        # ======================================
         for k in range(1, self.data_len-1):
-            phi = self.phiAlg.phi_nox(k)
-            i = self.get_interval_k(k)
-            PhiNOxMats[self.part_keys[i]][irc[i], :] = phi.flatten()
-            irc[i] += 1
+            key_sat = self.check_saturation(k)
+            key_T = self.swh.part_keys[self.get_interval_k(k)]
+            phi = self.alg[key_sat].phi_nox(k)
+            PhiNOxMats[key_T][key_sat][rc[key_T][key_sat], :] = phi.flatten()
+            rc[key_T][key_sat] += 1
+        print(PhiNOxMats)
         return PhiNOxMats
     # ==================================================================================================================
 
@@ -100,4 +129,3 @@ class PhiYmats():
 if __name__ == "__main__":
     import pprint
     p = PhiYmats(dd.decimatedTestData(1, 0))
-    T = 15.5

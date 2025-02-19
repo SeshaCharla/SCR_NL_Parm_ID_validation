@@ -1,5 +1,7 @@
+from typing import Any
+
 import numpy as np
-import theta_sat as ths
+from SatSys import theta_sat as ths
 from DataProcessing import decimate_data as dd
 from HybridModel import switching_handler as sh
 from temperature import phiT
@@ -20,7 +22,7 @@ class sat_eta:
 
     # ===============================================================================
 
-    def phi_sat(self, k) -> np.ndarray:
+    def phi_sat(self, k:int) -> np.ndarray:
         """ Calculates the phi(k) for getting the eta(k+1) """
         u1_k = self.dat.ssd['u1'][k]
         F_k = self.dat.ssd['F'][k]
@@ -29,7 +31,7 @@ class sat_eta:
         return (u1_k/F_k)*phi_k
     # ============================================================
 
-    def sim_eta(self):
+    def sim_eta(self) -> np.ndarray:
         """ Simulate the eta from data """
         eta_sim = np.zeros(self.data_len)
         for k in range(self.data_len-1):

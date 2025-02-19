@@ -27,7 +27,7 @@ for age in range(2):
         sim_2hl = sat_eta(dat, T_ord=2, T_parts=sh.T_hl)
 
         plt.figure()
-        plt.plot(dat.ssd['t'], dat.ssd['eta'], label='eta from data set')
+        plt.plot(dat.ssd['t'], dat.ssd['eta'], label=r'$\eta$')
         # plt.plot(dat.ssd['t'], sim_0.eta_sim, label='eta_saturated_0_none')
         # plt.plot(dat.ssd['t'], sim_0hl.eta_sim, label='eta_saturated_0_hl')
         # plt.plot(dat.ssd['t'], sim_0w.eta_sim, label='eta_saturated_0_wide')
@@ -37,13 +37,14 @@ for age in range(2):
         # plt.plot(dat.ssd['t'], sim_1n.eta_sim, label='eta_saturated_1_narrow')
         # plt.plot(dat.ssd['t'], sim_2.eta_sim, label='eta_saturated_2_none')
         # plt.plot(dat.ssd['t'], sim_2w.eta_sim, label='eta_saturated_2_wide')
-        plt.plot(dat.ssd['t'], sim_2hl.eta_sim, label='eta_saturated_2_hl')
+        plt.plot(dat.ssd['t'], sim_2hl.eta_sim, label=r'$\eta_{saturated}$')
+        # plt.plot(dat.ssd['t'], dat.ssd['F'], '--', label='F')
 
         plt.legend()
         plt.grid()
         plt.title(dat.name)
         plt.xlabel('t [s]')
-        plt.ylabel('eta' + uc.units['eta'])
+        plt.ylabel(r'$\eta$' + uc.units['eta'])
 plt.show()
 
 

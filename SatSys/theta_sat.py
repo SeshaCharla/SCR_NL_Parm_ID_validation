@@ -1,7 +1,7 @@
 from scipy.optimize import linprog
 from DataProcessing import decimate_data as dd
 from HybridModel import switching_handler as sh
-import phi_sat_mats as psm
+from SatSys import phi_sat_mats as psm
 import numpy as np
 
 
