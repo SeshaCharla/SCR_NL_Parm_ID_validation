@@ -5,6 +5,7 @@ import phi_sat_algorithm as phi_sat_alg
 from DataProcessing.decimate_data import decimatedTestData
 from HybridModel import switching_handler as sh
 from SatSys import sat_sim
+import  pprint as pp
 
 
 class PhiYmats():
@@ -26,8 +27,8 @@ class PhiYmats():
         self.alg['Sat'] = phi_sat_alg.phiSatAlg(self.dat)
         self.mat_row_len = self.get_mat_row_len()
         self.Phi_NOx_mats = self.get_Phi_NOx_mats()
-        # self.Y_NOx_mats = self.get_Y_NOx_mats()
-        # self.ranks, self.PE = self.check_PE()
+        self.Y_NOx_mats = self.get_Y_NOx_mats()
+        self.ranks, self.PE = self.check_PE(print_stuff=True)
     # ==================================================================================================================
 
     def check_saturation(self, k:int) -> str:
@@ -84,48 +85,71 @@ class PhiYmats():
             phi = self.alg[key_sat].phi_nox(k)
             PhiNOxMats[key_T][key_sat][rc[key_T][key_sat], :] = phi.flatten()
             rc[key_T][key_sat] += 1
-        print(PhiNOxMats)
         return PhiNOxMats
     # ==================================================================================================================
 
-    def get_Y_NOx_mats(self) -> dict[str, np.ndarray]:
+    def get_Y_NOx_mats(self) -> dict[str, dict[str, np.ndarray]]:
         """ Returns a dictionary of Y_NOx matrices for each of the partitions """
         # Creating the dictionary with zero matrices ============================================
-        Y_NOx_mats = dict()
-        for i in range(self.Nparts):
-            if self.mat_row_len[i] == 0:
-                Y_NOx_mats[self.part_keys[i]] = None
-            else:
-                Y_NOx_mats[self.part_keys[i]] = np.matrix(np.zeros([self.mat_row_len[i], 1]))
-        # =============================================================================================
-        irc = np.zeros(self.Nparts, dtype=int)  # interval row counter
-        for k in range(1, self.data_len - 1):
-            y = self.phiAlg.y(k)
-            i = self.get_interval_k(k)
-            Y_NOx_mats[self.part_keys[i]][irc[i], :] = y
-            irc[i] += 1
-        return Y_NOx_mats
+        yNOxMats = dict()
+        for key_T in self.swh.part_keys:
+            yNOxMats[key_T] = dict()
+            for key_sat in self.st_keys:
+                if self.mat_row_len[key_T][key_sat] != 0:
+                    yNOxMats[key_T][key_sat] = np.zeros(self.mat_row_len[key_T][key_sat])
+                else:
+                    yNOxMats[key_T][key_sat] = None
+        # ==========================================================================================================
+        rc = dict()     # row_count dictionary
+        for key_T in self.swh.part_keys:
+            rc[key_T] = dict()
+            for key_sat in self.st_keys:
+                rc[key_T][key_sat] = 0
+        # ======================================
+        for k in range(1, self.data_len-1):
+            key_sat = self.check_saturation(k)
+            key_T = self.swh.part_keys[self.get_interval_k(k)]
+            y = self.alg[key_sat].y(k)
+            yNOxMats[key_T][key_sat][rc[key_T][key_sat]] = y
+            rc[key_T][key_sat] += 1
+        return yNOxMats
     # ==================================================================================================================
 
     def check_PE(self, print_stuff = False):
         """ Checks PE conditions for each of the partitions"""
-        ranks = [(np.linalg.matrix_rank(Phi)>=self.Nparms) if Phi is not None else None for Phi in self.Phi_NOx_mats.values()]
-        PE = [(np.min(np.linalg.eigvals(Phi.T @ Phi)) >=0) if Phi is not None else None for Phi in self.Phi_NOx_mats.values()]
+        ranks = dict()
+        PE = dict()
+        for key_T in self.swh.part_keys:
+            ranks[key_T] = dict()
+            PE[key_T] = dict()
+            for key_sat in self.st_keys:
+                phi = self.Phi_NOx_mats[key_T][key_sat]
+                if phi is not None:
+                    ranks[key_T][key_sat] = np.linalg.matrix_rank(phi)
+                    PE[key_T][key_sat] = np.round(np.min(np.linalg.eigvals(phi @ phi.T)),2)
+                else:
+                    PE[key_T][key_sat] = None
+                    ranks[key_T][key_sat] = None
         # Showing rank condition and PE results
-        for i in range(self.Nparts):
-            if ranks[i] is not None:
-                if not ranks[i]:
-                    print(self.phiAlg.dat.name + " data length is not enough for T range: " + self.part_keys[i] + " range (rank < 8)")
-            if PE[i] is not None:
-                if not PE[i]:
-                    print("The PE condition is not satisfied for the " + self.phiAlg.dat.name + " data in the T range: " + self.part_keys[i])
+        for key_T in self.swh.part_keys:
+            for key_sat in self.st_keys:
+                if ranks[key_T][key_sat] is not None:
+                    if ranks[key_T][key_sat] < self.alg[key_sat].Nparms:
+                        print("Data length is not enough for unique paremeters for T in range "
+                                + str(key_T) + " under " + str(key_sat))
+                if PE[key_T][key_sat] is not None:
+                    if PE[key_T][key_sat] < 0:
+                        print("PE condition is not satisfied for T in range "
+                                + str(key_T) + " under " + str(key_sat))
         if print_stuff:
-            print(ranks)
-            print(PE)
+            pp.pprint("ranks:")
+            pp.pprint(ranks)
+            pp.pprint("Min Eigen Value:")
+            pp.pprint(PE)
         return ranks, PE
     # ==================================================================================================================
 
 # Testing
 if __name__ == "__main__":
     import pprint
-    p = PhiYmats(dd.decimatedTestData(1, 0))
+    p = PhiYmats(dd.decimatedTestData(1, 1))
