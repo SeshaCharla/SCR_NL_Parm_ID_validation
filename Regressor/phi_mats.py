@@ -1,7 +1,7 @@
 import numpy as np
 from DataProcessing import decimate_data as dd
-import phi_algorithm as phi_alg
-import phi_sat_algorithm as phi_sat_alg
+from Regressor import phi_algorithm as phi_alg
+from Regressor import phi_sat_algorithm as phi_sat_alg
 from DataProcessing.decimate_data import decimatedTestData
 from HybridModel import switching_handler as sh
 from SatSys import sat_sim
@@ -28,7 +28,7 @@ class PhiYmats():
         self.mat_row_len = self.get_mat_row_len()
         self.Phi_NOx_mats = self.get_Phi_NOx_mats()
         self.Y_NOx_mats = self.get_Y_NOx_mats()
-        self.ranks, self.PE = self.check_PE(print_stuff=True)
+        self.ranks, self.PE = self.check_PE(print_stuff=False)
     # ==================================================================================================================
 
     def check_saturation(self, k:int) -> str:
