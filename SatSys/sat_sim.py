@@ -35,8 +35,8 @@ class sat_eta:
         """ Simulate the eta from data """
         eta_sim = np.zeros(self.data_len)
         for k in range(self.data_len-1):
-            i = self.swh.get_interval_T(self.dat.ssd['T'][k])
-            eta_sim[k+1] = ((self.phi_sat(k)).T @ self.theta_sat.thetas[self.swh.part_keys[i]])[0, 0]
+            key_T = self.swh.get_interval_T(self.dat.ssd['T'][k])
+            eta_sim[k+1] = ((self.phi_sat(k)).T @ self.theta_sat.thetas[key_T])[0, 0]
         eta_sim[0] = eta_sim[1]
         return eta_sim
     # =================================================================================================
