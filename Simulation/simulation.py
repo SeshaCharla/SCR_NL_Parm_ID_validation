@@ -10,7 +10,7 @@ class NOx_sim():
     def __init__(self, dat: dd.decimatedTestData):
         self.ls_sol = ls.LS_parms(dat)
         self.ssd = dat.ssd
-        self.data_len = self.ls_sol.phm.data_len
+        self.data_len = len(dat.ssd['t'])
         self.x1_sim = np.array([np.nan for i in range(self.data_len)])
         self.x1_sim[0] = self.ssd['x1'][0]
         self.x1_sim[1] = self.ssd['x1'][1]

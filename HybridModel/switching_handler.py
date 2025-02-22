@@ -16,11 +16,11 @@ class switch_handle:
         self.part_keys = [str(np.array(self.intervals[i]) * 10 + 200) for i in range(self.Nparts)]
     # =============================================================================================
 
-    def get_interval_T(self, T: float) -> int:
+    def get_interval_T(self, T: float) -> str:
         """ The intervals are treated as half-open on the higher side i.e., [a, b)"""
         for i in range(self.Nparts):
             if self.intervals[i][0] <= T <= self.intervals[i][1]:  # this returns the first interval it belongs to unless
-                return i                                           # the last value
+                return self.part_keys[i]                                           # the last value
 
 
 if __name__ == '__main__':
@@ -28,4 +28,4 @@ if __name__ == '__main__':
     Ti = 8.95
     interval_num = sh.get_interval_T(Ti)
     print("Intervals: ", sh.intervals)
-    print("Interval of Ti={} is ".format(Ti) + str(interval_num) + ": " + str(sh.intervals[interval_num]))
+    print("Interval of Ti={} is ".format(Ti) + str(interval_num))

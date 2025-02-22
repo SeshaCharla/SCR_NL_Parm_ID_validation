@@ -16,7 +16,7 @@ class PhiYmats():
         self.dat = dec_dat
         self.T_parts = T_parts
         self.swh = sh.switch_handle(self.T_parts)
-        self.eta_sat = (sat_sim.sat_eta(self.dat, T_ord=2, T_parts=self.T_parts)).eta_sim
+        self.eta_sat = (sat_sim.sat_eta(self.dat, T_ord=T_ords[1], T_parts=self.T_parts)).eta_sim
         self.T_ord_k = T_ords[0]
         self.T_ord_kGamma = T_ords[1]
         # =================================================================================
@@ -42,11 +42,11 @@ class PhiYmats():
             return 'uSat'
     #=============================================================
 
-    def get_interval_k(self, k):
+    def get_interval_k(self, k) -> str:
         """ Get the interval of the kth time step """
         Ti = (self.T[k] + self.T[k-1])/2
-        i = self.swh.get_interval_T(Ti)
-        return i
+        key = self.swh.get_interval_T(Ti)
+        return key
     # ==================================================================================================================
 
     def get_mat_row_len(self) -> dict[str, dict[str, int]]:
@@ -57,7 +57,7 @@ class PhiYmats():
             for key_sat in self.st_keys:
                 mat_sizes[key_T][key_sat] = 0
         for k in range(1, self.data_len-1):
-            key_T = self.swh.part_keys[self.get_interval_k(k)]
+            key_T = self.get_interval_k(k)
             key_sat = self.check_saturation(k)
             mat_sizes[key_T][key_sat] += 1
         return mat_sizes
@@ -83,7 +83,7 @@ class PhiYmats():
         # ======================================
         for k in range(1, self.data_len-1):
             key_sat = self.check_saturation(k)
-            key_T = self.swh.part_keys[self.get_interval_k(k)]
+            key_T = self.get_interval_k(k)
             phi = self.alg[key_sat].phi_nox(k)
             PhiNOxMats[key_T][key_sat][rc[key_T][key_sat], :] = phi.flatten()
             rc[key_T][key_sat] += 1
@@ -110,7 +110,7 @@ class PhiYmats():
         # ======================================
         for k in range(1, self.data_len-1):
             key_sat = self.check_saturation(k)
-            key_T = self.swh.part_keys[self.get_interval_k(k)]
+            key_T = self.get_interval_k(k)
             y = self.alg[key_sat].y(k)
             yNOxMats[key_T][key_sat][rc[key_T][key_sat]] = y
             rc[key_T][key_sat] += 1
@@ -154,4 +154,4 @@ class PhiYmats():
 # Testing
 if __name__ == "__main__":
     import pprint
-    p = PhiYmats(dd.decimatedTestData(1, 1))
+    p = PhiYmats(dd.decimatedTestData(1, 1), T_parts=sh.T_hl, T_ords=(2, 2))
