@@ -42,6 +42,6 @@ if __name__ == '__main__':
     for age in range(2):
         for tst in range(3):
             dat = dd.decimatedTestData(age, tst)
-            thetas = theta_sat(dat, T_ord=2, T_parts=sh.T_hl)
+            thetas = theta_sat(dat, T_ord=2, T_parts=sh.T_wide)
             print(dat.name)
             pp.pprint(thetas.thetas)
