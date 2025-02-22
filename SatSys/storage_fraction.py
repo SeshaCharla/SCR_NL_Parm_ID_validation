@@ -22,5 +22,17 @@ for tst in range(3):
     plt.grid()
     plt.xlabel('t [s]')
     plt.ylabel('Storage Fraction')
+
+for tst in range(3):
+    plt.figure()
+    for age in range(2):
+        dat = dat_set[age][tst]
+        sim = sat_eta(dat, T_ord=2, T_parts=sh.T_hl)
+        plt.plot(dat.ssd['t'], sim.eta_sim, label=dat.name)
+
+    plt.legend()
+    plt.grid()
+    plt.xlabel('t [s]')
+    plt.ylabel('Max. NOx Reduction')
 plt.show()
 

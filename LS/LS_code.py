@@ -3,6 +3,7 @@ from DataProcessing import decimate_data as dd
 from Regressor import phi_mats as ph
 from scipy.optimize import lsq_linear
 import pprint as pp
+from HybridModel import switching_handler as sh
 
 class LS_parms():
     """ Least-squares solutions for test parameter estimation """
@@ -10,7 +11,7 @@ class LS_parms():
     def __init__(self, dat: dd.decimatedTestData) -> None:
         """ Initiates the solver """
         self.dat = dat
-        self.regr = ph.PhiYmats(self.dat)
+        self.regr = ph.PhiYmats(self.dat, T_parts=sh.T_hl, T_ords=(2, 2))
         self.thetas = self.solve_LS()
 
     # =======================================================

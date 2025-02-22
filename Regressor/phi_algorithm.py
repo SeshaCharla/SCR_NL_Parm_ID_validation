@@ -7,13 +7,13 @@ from temperature import  phiT
 class phiAlg():
     """ Class holding the methods and data for phi algorithm for kth time step """
     #==============================================================================
-    def __init__(self, dec_dat: dd.decimatedTestData) -> None:
+    def __init__(self, dec_dat: dd.decimatedTestData, T_ord_k: int, T_ord_kGamma: int) -> None:
         """ Initiates the object which holds the data set """
         self.dat = dec_dat
         self.ssd = self.dat.ssd
         self.data_len = len(self.ssd['t'])
-        self.T_ord_k = 1
-        self.T_ord_kGamma = 2
+        self.T_ord_k = T_ord_k
+        self.T_ord_kGamma = T_ord_kGamma
         self.Nparms = 3*(self.T_ord_k + 1) + (self.T_ord_kGamma + 1)
 
     # ========================================================

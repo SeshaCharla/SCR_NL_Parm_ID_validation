@@ -7,12 +7,12 @@ from temperature import  phiT
 class phiSatAlg():
     """ Class holding the methods and data for phi algorithm for kth time step under saturation case"""
     #==============================================================================
-    def __init__(self, dec_dat: dd.decimatedTestData) -> None:
+    def __init__(self, dec_dat: dd.decimatedTestData, T_ord_kGamma: int) -> None:
         """ Initiates the object which holds the data set """
         self.dat = dec_dat
         self.ssd = self.dat.ssd
         self.data_len = len(self.ssd['t'])
-        self.T_ord = 2      # T_ord Gamma
+        self.T_ord = T_ord_kGamma      # T_ord Gamma
         self.Nparms = self.T_ord + 1
     # =========================================
 

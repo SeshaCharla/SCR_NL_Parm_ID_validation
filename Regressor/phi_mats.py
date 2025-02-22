@@ -12,19 +12,21 @@ class PhiYmats():
     """ Container for regression matrices Y and Phi for each of the hybrid states
         This class holds  a list of Phi_NOx and Y_NOx matrices for given data
     """
-    def __init__(self, dec_dat: decimatedTestData) -> None:
+    def __init__(self, dec_dat: decimatedTestData,  T_parts: list, T_ords: tuple,) -> None:
         self.dat = dec_dat
-        self.T_parts = sh.T_hl
+        self.T_parts = T_parts
         self.swh = sh.switch_handle(self.T_parts)
         self.eta_sat = (sat_sim.sat_eta(self.dat, T_ord=2, T_parts=self.T_parts)).eta_sim
+        self.T_ord_k = T_ords[0]
+        self.T_ord_kGamma = T_ords[1]
         # =================================================================================
         self.T = self.dat.ssd['T']
         self.data_len = len(self.T)
         # ==========================
         self.st_keys = ['Sat', 'uSat']
         self.alg = dict()
-        self.alg['uSat'] = phi_alg.phiAlg(self.dat)
-        self.alg['Sat'] = phi_sat_alg.phiSatAlg(self.dat)
+        self.alg['uSat'] = phi_alg.phiAlg(self.dat, T_ord_k=self.T_ord_k, T_ord_kGamma=self.T_ord_kGamma)
+        self.alg['Sat'] = phi_sat_alg.phiSatAlg(self.dat, T_ord_kGamma=self.T_ord_kGamma)
         self.mat_row_len = self.get_mat_row_len()
         self.Phi_NOx_mats = self.get_Phi_NOx_mats()
         self.Y_NOx_mats = self.get_Y_NOx_mats()
