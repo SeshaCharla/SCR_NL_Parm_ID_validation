@@ -40,12 +40,12 @@ if __name__ == '__main__':
     # ==================================================================================================================
 
 if __name__ == '__main__':
-    pass
-#     import matplotlib.pyplot as plt
-#     import matplotlib
-#     from DataProcessing import unit_convs as uc
-#     matplotlib.use("tkAgg")
-#     sim = NOx_sim(dd.decimatedTestData(1, 0))
+    import matplotlib.pyplot as plt
+    import matplotlib
+    from DataProcessing import unit_convs as uc
+    matplotlib.use("tkAgg")
+    sim = NOx_sim(dd.decimatedTestData(1, 0), T_ords=(1, 2), T_parts=sh.T_hl)
+
 #     plt.figure()
 #     plt.plot(sim.ssd['t'], sim.x1_sim, label="simulated", linewidth=1)
 #     plt.plot(sim.ssd['t'], sim.ssd['x1'], label="data", linewidth=1)

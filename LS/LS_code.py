@@ -8,15 +8,17 @@ from HybridModel import switching_handler as sh
 class LS_parms():
     """ Least-squares solutions for test parameter estimation """
     # ==============================================================
-    def __init__(self, dat: dd.decimatedTestData) -> None:
+    def __init__(self, dat: dd.decimatedTestData, T_ords: tuple, T_parts: list) -> None:
         """ Initiates the solver """
         self.dat = dat
-        self.regr = ph.PhiYmats(self.dat, T_parts=sh.T_hl, T_ords=(2, 2))
+        self.T_ords = T_ords
+        self.T_parts = T_parts
+        self.regr = ph.PhiYmats(self.dat, T_parts=self.T_parts, T_ords=self.T_ords)
         self.thetas = self.solve_LS()
 
     # =======================================================
 
-    def solve_LS(self):
+    def solve_LS(self) -> dict():
         """ Solves the hybrid least squares problem """
         thetas = dict()
         for key_T in self.regr.swh.part_keys:
@@ -29,8 +31,14 @@ class LS_parms():
                     thetas[key_T][key_sat] = sol.x
                 else:
                     thetas[key_T][key_sat] = None
-        pp.pprint(self.dat.name)
-        pp.pprint(thetas)
+        return thetas
+
+    # ==================================================================
+    def __repr__(self) -> str:
+        """ For printing the result """
+        s1 = self.dat.name
+        s2 = repr(self.thetas)
+        return '\n' + s1 + ': \n' + s2 + '\n'
 
 # ======================================================================================================================
 if __name__ == '__main__':
@@ -40,7 +48,8 @@ if __name__ == '__main__':
     mpl.use('tkAgg')
 
     dats = dd.load_decimated_test_data_set()
-    ls_sol = [[LS_parms(dats[age][tst]) for tst in range(3)] for age in range(2)]
+    ls_sol = [[LS_parms(dats[age][tst], T_parts=sh.T_hl, T_ords=(1, 2)) for tst in range(3)] for age in range(2)]
+    print(ls_sol)
 
     # theta_names = [r'$\theta_{ads}$', r'$\theta_{od}$', r'$\theta_{scr}$', r'$\theta_{ads/scr}$']
     # sc_markers = ['s', 'x']
