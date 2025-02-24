@@ -28,7 +28,8 @@ for tst in range(3):
     for age in range(2):
         dat = dat_set[age][tst]
         sim = sat_eta(dat, T_ord=2, T_parts=sh.T_hl)
-        plt.plot(dat.ssd['t'], sim.eta_sim, label=dat.name)
+        plt.plot(dat.ssd['t'], [ (dat.ssd['F'][k]/dat.ssd['u1'][k])*sim.eta_sim[k] for k in range(len(dat.ssd['t']))], label=dat.name)
+        plt.plot(dat.ssd['t'], dat.ssd['T'], label="T_"+dat.name)
 
     plt.legend()
     plt.grid()
