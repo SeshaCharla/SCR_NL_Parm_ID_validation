@@ -1,6 +1,7 @@
 import numpy as np
 from DataProcessing import decimate_data as dd
 from Regressor import phi_mats as ph
+from temperature import phiT
 from scipy.optimize import lsq_linear
 import pprint as pp
 from HybridModel import switching_handler as sh
@@ -48,7 +49,7 @@ if __name__ == '__main__':
     mpl.use('tkAgg')
 
     dats = dd.load_decimated_test_data_set()
-    ls_sol = [[LS_parms(dats[age][tst], T_parts=sh.T_hl, T_ords=(1, 2)) for tst in range(3)] for age in range(2)]
+    ls_sol = [[LS_parms(dats[age][tst], T_parts=sh.T_hl, T_ords=phiT.T_ord) for tst in range(3)] for age in range(2)]
     print(ls_sol)
 
     # theta_names = [r'$\theta_{ads}$', r'$\theta_{od}$', r'$\theta_{scr}$', r'$\theta_{ads/scr}$']
