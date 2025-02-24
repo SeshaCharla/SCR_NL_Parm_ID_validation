@@ -7,14 +7,14 @@ from HybridModel import switching_handler as sh
 
 class NOx_sim():
     """ Simulating the tailpipe NOx using the hybrid model """
-    def __init__(self, dat: dd.decimatedTestData, T_ords: tuple, T_parts: list):
+    def __init__(self, dat: dd.decimatedTestData, T_parts: list, T_ords: dict):
         self.dat = dat
         self.dat_len = len(self.dat.ssd['t'])
         self.T_ords = T_ords
         self.T_ord_k = self.T_ords[0]
         self.T_ord_kGamma = self.T_ords[1]
         self.T_parts = T_parts
-        self.parms = ls.LS_parms(self.dat, T_ords = self.T_ords, T_parts = self.T_parts)
+        self.parms = ls.LS_parms(self.dat, T_parts = self.T_parts, T_ords = self.T_ords)
 
     def f_gama(self, k):
         """ Calculates f_Gamma(k) """

@@ -9,7 +9,7 @@ from HybridModel import switching_handler as sh
 class LS_parms():
     """ Least-squares solutions for test parameter estimation """
     # ==============================================================
-    def __init__(self, dat: dd.decimatedTestData, T_ords: tuple, T_parts: list) -> None:
+    def __init__(self, dat: dd.decimatedTestData, T_parts: list, T_ords:dict) -> None:
         """ Initiates the solver """
         self.dat = dat
         self.T_ords = T_ords
@@ -19,7 +19,7 @@ class LS_parms():
 
     # =======================================================
 
-    def solve_LS(self) -> dict():
+    def solve_LS(self) -> dict:
         """ Solves the hybrid least squares problem """
         thetas = dict()
         for key_T in self.regr.swh.part_keys:
