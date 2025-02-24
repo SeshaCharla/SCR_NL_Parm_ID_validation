@@ -55,10 +55,11 @@ if __name__ == '__main__':
     from DataProcessing import unit_convs as uc
     matplotlib.use("tkAgg")
     sim = NOx_sim(dd.decimatedTestData(0, 2), T_parts=sh.T_hl, T_ords=phiT.T_ord)
-    k = 700
+    k = 900
     print(sim.f_gamma(k))
     print(sim.f_sigma(sim.dat.ssd['x1'][k], k))
     print(sim.dat.ssd['u1'][k])
+    print(sim.dat.ssd['eta'][k+1])
 
 #     plt.figure()
 #     plt.plot(sim.ssd['t'], sim.x1_sim, label="simulated", linewidth=1)
