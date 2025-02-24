@@ -5,26 +5,32 @@ from sat_sim import sat_eta
 import pprint as pp
 import matplotlib.pyplot as plt
 import matplotlib
+from temperature import phiT
+
 matplotlib.use('TkAgg')
 from DataProcessing import unit_convs as uc
 
 
 dat_set = dd.load_decimated_test_data_set()
+T_ord = phiT.T_ord.copy()
 
 for age in range(2):
     for tst in range(3):
         dat = dat_set[age][tst]
-        sim_0 = sat_eta(dat, T_ord=0, T_parts=sh.T_none)
-        sim_0w = sat_eta(dat, T_ord=0, T_parts=sh.T_wide)
-        sim_0n = sat_eta(dat, T_ord=0, T_parts=sh.T_narrow)
-        sim_0hl = sat_eta(dat, T_ord=0, T_parts=sh.T_hl)
-        sim_1 = sat_eta(dat, T_ord=1, T_parts=sh.T_none)
-        sim_1w = sat_eta(dat, T_ord=1, T_parts=sh.T_wide)
-        sim_1n = sat_eta(dat, T_ord=1, T_parts=sh.T_narrow)
-        sim_1hl = sat_eta(dat, T_ord=1, T_parts=sh.T_hl)
-        sim_2 = sat_eta(dat, T_ord=2, T_parts=sh.T_none)
-        sim_2w = sat_eta(dat, T_ord=2, T_parts=sh.T_wide)
-        sim_2hl = sat_eta(dat, T_ord=2, T_parts=sh.T_hl)
+        T_ord["Gamma"] = 0
+        sim_0   = sat_eta(dat,  T_parts=sh.T_none, T_ord=T_ord)
+        sim_0w  = sat_eta(dat,  T_parts=sh.T_wide, T_ord=T_ord)
+        sim_0n  = sat_eta(dat,  T_parts=sh.T_narrow, T_ord=T_ord)
+        sim_0hl = sat_eta(dat,  T_parts=sh.T_hl, T_ord=T_ord)
+        T_ord["Gamma"] = 1
+        sim_1   = sat_eta(dat,  T_parts=sh.T_none, T_ord=T_ord)
+        sim_1w  = sat_eta(dat,  T_parts=sh.T_wide, T_ord=T_ord)
+        sim_1n  = sat_eta(dat,  T_parts=sh.T_narrow, T_ord=T_ord)
+        sim_1hl = sat_eta(dat,  T_parts=sh.T_hl , T_ord=T_ord)
+        T_ord["Gamma"] = 2
+        sim_2   = sat_eta(dat,  T_parts=sh.T_none, T_ord=T_ord)
+        sim_2w  = sat_eta(dat,  T_parts=sh.T_wide, T_ord=T_ord)
+        sim_2hl = sat_eta(dat,  T_parts=sh.T_hl, T_ord=T_ord)
 
         plt.figure()
         plt.plot(dat.ssd['t'], dat.ssd['eta'], label=r'$\eta$')

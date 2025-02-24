@@ -9,12 +9,12 @@ from temperature import phiT
 
 class sat_eta:
     """ Class simulating the saturated system """
-    def __init__(self, dec_dat: dd.decimatedTestData, T_ord: int , T_parts: list ):
+    def __init__(self, dec_dat: dd.decimatedTestData, T_parts: list, T_ord: dict) -> None:
         """ Loads the data and generates the simulation of the saturated system """
         self.dat = dec_dat
         self.T_ord = T_ord
         self.T_parts = T_parts
-        self.theta_sat = ths.theta_sat(self.dat, self.T_ord, self.T_parts)
+        self.theta_sat = ths.theta_sat(self.dat, self.T_parts, self.T_ord)
         self.swh = self.theta_sat.swh
         self.data_len = self.theta_sat.cAb.data_len
         self.eta_sim = self.sim_eta()
@@ -27,7 +27,7 @@ class sat_eta:
         u1_k = self.dat.ssd['u1'][k]
         F_k = self.dat.ssd['F'][k]
         T_k = self.dat.ssd['T'][k]
-        phi_k = phiT.phi_T(T_k, self.T_ord)
+        phi_k = phiT.phi_T(T_k, self.T_ord['Gamma'])
         return (u1_k/F_k)*phi_k
     # ============================================================
 
@@ -50,7 +50,7 @@ if __name__ == "__main__":
     from DataProcessing import unit_convs as uc
 
     dat = dd.decimatedTestData(0, 1)
-    sim = sat_eta(dat, T_ord=2, T_parts=sh.T_hl)
+    sim = sat_eta(dat, T_parts=sh.T_hl, T_ord=phiT.T_ord)
 
     plt.figure()
     plt.plot(dat.ssd['t'], sim.str_frac, label="Storage fraction")

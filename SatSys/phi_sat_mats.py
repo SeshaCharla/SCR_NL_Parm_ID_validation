@@ -8,11 +8,11 @@ class cAb_mats():
     """
         Container for the cost and constraint matrices for the linear program under various temperature bounds
     """
-    def __init__(self, dec_dat: dd.decimatedTestData, T_ord:int , T_parts:list ) -> None:
+    def __init__(self, dec_dat: dd.decimatedTestData,  T_parts:list, T_ord:dict) -> None:
         self.dat = dec_dat
         self.T_ord = T_ord
         self.swh = sh.switch_handle(T_parts)
-        self.Nparms = self.T_ord + 1
+        self.Nparms = self.T_ord['Gamma'] + 1
         self.T = self.dat.ssd['T']
         self.data_len = len(self.T)
         self.row_len = self.get_row_len()
@@ -26,7 +26,7 @@ class cAb_mats():
         return key
     # ==================================================================================================================
 
-    def get_row_len(self) -> np.ndarray:
+    def get_row_len(self) -> dict[str, int]:
         """ The row length of each of the regression matrices of the switched system """
         mat_sizes = dict()
         for key_T in self.swh.part_keys:
@@ -75,7 +75,7 @@ class cAb_mats():
             u1_k = self.dat.ssd['u1'][k]
             F_k = self.dat.ssd['F'][k]
             T_k = self.dat.ssd['T'][k]
-            A_mats[key_T][irc[key_T], :] = (u1_k/F_k) * (phiT.phi_T(T_k, self.T_ord)).flatten()
+            A_mats[key_T][irc[key_T], :] = (u1_k/F_k) * (phiT.phi_T(T_k, self.T_ord['Gamma'])).flatten()
             irc[key_T] += 1
         return A_mats
     # ==================================================================================================================
@@ -94,6 +94,6 @@ class cAb_mats():
 # Testing
 if __name__ == "__main__":
     import pprint
-    cAb_rmc = cAb_mats(dd.decimatedTestData(0, 2), T_ord=2, T_parts=sh.T_hl)
+    cAb_rmc = cAb_mats(dd.decimatedTestData(0, 2), T_parts=sh.T_hl, T_ord=phiT.T_ord)
     pprint.pprint(cAb_rmc.A_mats)
     pprint.pprint(cAb_rmc.c_vecs)

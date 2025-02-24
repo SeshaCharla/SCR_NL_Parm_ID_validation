@@ -2,18 +2,19 @@ from scipy.optimize import linprog
 from DataProcessing import decimate_data as dd
 from HybridModel import switching_handler as sh
 from SatSys import phi_sat_mats as psm
+from temperature import phiT
 import numpy as np
 
 
 class theta_sat:
     """ Class holding the saturated system parameters for the temperature ranges """
 
-    def __init__(self, dec_dat: dd.decimatedTestData, T_ord: int , T_parts: list):
+    def __init__(self, dec_dat: dd.decimatedTestData, T_parts: list, T_ord: dict):
         """ Loads all the data and solves the linear program in each case """
         self.dat  = dec_dat
         self.T_ord = T_ord
         self.T_parts = T_parts
-        self.cAb = psm.cAb_mats(self.dat, self.T_ord, self.T_parts)
+        self.cAb = psm.cAb_mats(self.dat,  self.T_parts, self.T_ord)
         self.swh = self.cAb.swh
         self.Nparms = self.cAb.Nparms
         self.thetas = self.get_thetas()
@@ -42,6 +43,6 @@ if __name__ == '__main__':
     for age in range(2):
         for tst in range(3):
             dat = dd.decimatedTestData(age, tst)
-            thetas = theta_sat(dat, T_ord=2, T_parts=sh.T_hl)
+            thetas = theta_sat(dat, T_parts=sh.T_hl, T_ord=phiT.T_ord)
             print(dat.name)
             pp.pprint(thetas.thetas)

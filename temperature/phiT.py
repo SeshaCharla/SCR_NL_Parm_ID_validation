@@ -4,7 +4,7 @@ T_ord = dict()
 T_ord['ads'] = 1
 T_ord['od'] = 1
 T_ord['scr'] = 1
-T_ord['Gam_scr/ads'] = 2
+T_ord['Gamma'] = 2
 
 
 def phi_T(T: float, ord: int) -> np.ndarray:
