@@ -1,5 +1,12 @@
 import  numpy as np
 
+T_ord = dict()
+T_ord['ads'] = 1
+T_ord['od'] = 1
+T_ord['scr'] = 1
+T_ord['Gam_scr/ads'] = 2
+
+
 def phi_T(T: float, ord: int) -> np.ndarray:
     """ Returns phi(T) for the given polynomial order"""
     T_poly = [T**n for n in range(ord, -1, -1)]
@@ -8,5 +15,6 @@ def phi_T(T: float, ord: int) -> np.ndarray:
 
 #===
 if __name__ == "__main__":
-    T_ord = 5
-    print(phi_T(5, T_ord))
+    import pprint as pp
+    pp.pprint(T_ord)
+    print(phi_T(5, T_ord['Gam_scr/ads']))
