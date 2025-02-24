@@ -17,4 +17,4 @@ def phi_T(T: float, ord: int) -> np.ndarray:
 if __name__ == "__main__":
     import pprint as pp
     pp.pprint(T_ord)
-    print(phi_T(5, T_ord['Gam_scr/ads']))
+    print(phi_T(5, T_ord['Gamma']))
