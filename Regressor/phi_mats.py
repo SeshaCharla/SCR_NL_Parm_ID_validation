@@ -4,6 +4,7 @@ from Regressor import phi_algorithm as phi_alg
 from Regressor import phi_sat_algorithm as phi_sat_alg
 from DataProcessing.decimate_data import decimatedTestData
 from HybridModel import switching_handler as sh
+from temperature import phiT
 from SatSys import sat_sim
 import  pprint as pp
 
@@ -12,21 +13,20 @@ class PhiYmats():
     """ Container for regression matrices Y and Phi for each of the hybrid states
         This class holds  a list of Phi_NOx and Y_NOx matrices for given data
     """
-    def __init__(self, dec_dat: decimatedTestData,  T_parts: list, T_ords: tuple,) -> None:
+    def __init__(self, dec_dat: decimatedTestData,  T_parts: list, T_ords: dict) -> None:
         self.dat = dec_dat
         self.T_parts = T_parts
+        self.T_ords = T_ords
         self.swh = sh.switch_handle(self.T_parts)
-        self.eta_sat = (sat_sim.sat_eta(self.dat, T_ord=T_ords[1], T_parts=self.T_parts)).eta_sim
-        self.T_ord_k = T_ords[0]
-        self.T_ord_kGamma = T_ords[1]
+        self.eta_sat = (sat_sim.sat_eta(self.dat, T_parts=self.T_parts, T_ord=self.T_ords)).eta_sim
         # =================================================================================
         self.T = self.dat.ssd['T']
         self.data_len = len(self.T)
         # ==========================
         self.st_keys = ['Sat', 'uSat']
         self.alg = dict()
-        self.alg['uSat'] = phi_alg.phiAlg(self.dat, T_ord_k=self.T_ord_k, T_ord_kGamma=self.T_ord_kGamma)
-        self.alg['Sat'] = phi_sat_alg.phiSatAlg(self.dat, T_ord_kGamma=self.T_ord_kGamma)
+        self.alg['uSat'] = phi_alg.phiAlg(self.dat, T_ord=self.T_ords)
+        self.alg['Sat'] = phi_sat_alg.phiSatAlg(self.dat, T_ord=self.T_ords)
         self.mat_row_len = self.get_mat_row_len()
         self.Phi_NOx_mats = self.get_Phi_NOx_mats()
         self.Y_NOx_mats = self.get_Y_NOx_mats()
@@ -154,4 +154,4 @@ class PhiYmats():
 # Testing
 if __name__ == "__main__":
     import pprint
-    p = PhiYmats(dd.decimatedTestData(1, 1), T_parts=sh.T_hl, T_ords=(2, 2))
+    p = PhiYmats(dd.decimatedTestData(1, 1), T_parts=sh.T_hl, T_ords=phiT.T_ord)

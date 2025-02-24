@@ -7,13 +7,13 @@ from temperature import  phiT
 class phiSatAlg():
     """ Class holding the methods and data for phi algorithm for kth time step under saturation case"""
     #==============================================================================
-    def __init__(self, dec_dat: dd.decimatedTestData, T_ord_kGamma: int) -> None:
+    def __init__(self, dec_dat: dd.decimatedTestData, T_ord: dict) -> None:
         """ Initiates the object which holds the data set """
         self.dat = dec_dat
         self.ssd = self.dat.ssd
-        self.data_len = len(self.ssd['t'])
-        self.T_ord = T_ord_kGamma      # T_ord Gamma
-        self.Nparms = self.T_ord + 1
+        self.data_len = self.dat.ssd_data_len
+        self.T_ord = T_ord      # T_ord Gamma
+        self.Nparms = self.T_ord['Gamma'] + 1
     # =========================================
 
     def phi_nox(self, k: int) -> np.ndarray:
@@ -25,7 +25,7 @@ class phiSatAlg():
         u1_k = self.ssd['u1'][k]
         F_k = self.ssd['F'][k]
         T_k = self.ssd['T'][k]
-        phi_sat_k = (u1_k/F_k) * phiT.phi_T(T_k, self.T_ord)
+        phi_sat_k = (u1_k/F_k) * phiT.phi_T(T_k, self.T_ord['Gamma'])
         return phi_sat_k
     # ======================================================================
 
@@ -52,10 +52,10 @@ if __name__ == "__main__":
     start = 1
     for test in range(3):
         for age in range(2):
-            p = phiSatAlg(dat[age][test])
+            p = phiSatAlg(dat[age][test], T_ord=phiT.T_ord)
             plt.figure()
             plt.plot(p.ssd['t'][start:p.data_len-1], [p.y(k) for k in range(start, p.data_len-1)], linewidth = 1, label = p.dat.name)
-            phi_sat = [p.phi_sat_nox(k) for k in range(start, p.data_len - 1)]
+            phi_sat = [p.phi_nox(k) for k in range(start, p.data_len - 1)]
             plt.figure()
             for j in range(p.Nparms-1):
                 plt.plot(p.ssd['t'][start:p.data_len-1],

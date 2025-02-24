@@ -7,14 +7,13 @@ from temperature import  phiT
 class phiAlg():
     """ Class holding the methods and data for phi algorithm for kth time step """
     #==============================================================================
-    def __init__(self, dec_dat: dd.decimatedTestData, T_ord_k: int, T_ord_kGamma: int) -> None:
+    def __init__(self, dec_dat: dd.decimatedTestData, T_ord: dict) -> None:
         """ Initiates the object which holds the data set """
         self.dat = dec_dat
         self.ssd = self.dat.ssd
-        self.data_len = len(self.ssd['t'])
-        self.T_ord_k = T_ord_k
-        self.T_ord_kGamma = T_ord_kGamma
-        self.Nparms = 3*(self.T_ord_k + 1) + (self.T_ord_kGamma + 1)
+        self.data_len = self.dat.ssd_data_len
+        self.T_ord = T_ord
+        self.Nparms = np.sum([self.T_ord[key] + 1 for key in T_ord.keys()])
 
     # ========================================================
     def get_km_dat(self, k: int) -> km.km_dat:
@@ -30,16 +29,14 @@ class phiAlg():
         # ===========================================================
         km = self.get_km_dat(k)
         x1_u1_1 = (km.x1k/km.u1m) - 1
-        phi_k = phiT.phi_T(km.Tk, self.T_ord_k)
-        phi_m = phiT.phi_T(km.Tm, self.T_ord_k)
-        phi_nox_1 = x1_u1_1 * km.u2m * phi_m
-        phi_nox_2 = x1_u1_1 * km.Fm * phi_m
-        phi_nox_3 = -km.etak * km.Fm * phi_k
-        phi_nox_4 = (km.u2m/km.Fm) * phiT.phi_T(km.Tm, self.T_ord_kGamma)
-        phi_nox_k = np.concatenate([phi_nox_1,
-                                    phi_nox_2,
-                                    phi_nox_3,
-                                    phi_nox_4], axis=0)
+        phi_nox_ads = x1_u1_1 * km.u2m * phiT.phi_T(km.Tm, self.T_ord['ads'])
+        phi_nox_od  = x1_u1_1 * km.Fm * phiT.phi_T(km.Tm, self.T_ord['od'])
+        phi_nox_scr = -km.etak * km.Fm * phiT.phi_T(km.Tk, self.T_ord['scr'])
+        phi_nox_Gamma = (km.u2m/km.Fm) * phiT.phi_T(km.Tm, self.T_ord['Gamma'])
+        phi_nox_k = np.concatenate([phi_nox_ads,
+                                    phi_nox_od,
+                                    phi_nox_scr,
+                                    phi_nox_Gamma], axis=0)
         return phi_nox_k
 
     # ======================================================================
@@ -68,7 +65,7 @@ if __name__ == "__main__":
     start = 1
     for test in range(3):
         for age in range(2):
-            p = phiAlg(dat[age][test])
+            p = phiAlg(dat[age][test], T_ord=phiT.T_ord)
             plt.figure(11*test)
             plt.plot(p.ssd['t'][start:-1], [p.y(i) for i in range(start, len(p.ssd['t']) - 1)], linewidth = 1, label = p.dat.name)
             phi_nox_mats = np.concatenate([((p.phi_nox(k)).reshape([1, p.Nparms])) for k in range(start, len(p.ssd['t'])-1)], axis = 0)

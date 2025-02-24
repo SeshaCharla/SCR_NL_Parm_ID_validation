@@ -14,6 +14,8 @@ class decimatedTestData():
         self.name = self.filtData.name
         self.ssd = self.decimate_ssd()
         self.iod = self.decimate_iod()
+        self.ssd_data_len = len(self.ssd['t'])
+        self.iod_data_len = len(self.iod['t'])
 
     # ========================================================================
     def decimate_ssd(self) -> dict[str, np.ndarray]:
