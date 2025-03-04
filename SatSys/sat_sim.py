@@ -49,26 +49,27 @@ if __name__ == "__main__":
     matplotlib.use('TkAgg')
     from DataProcessing import unit_convs as uc
 
-    dat = dd.decimatedTestData(0, 1)
-    sim = sat_eta(dat, T_parts=sh.T_hl, T_ord=phiT.T_ord)
+    for age in range(2):
+        for test in range(3):
+            dat = dd.decimatedTestData(age, test)
+            sim = sat_eta(dat, T_parts=sh.T_hl, T_ord=phiT.T_ord)
 
-    plt.figure()
-    plt.plot(dat.ssd['t'], sim.str_frac, label="Storage fraction")
-    plt.legend()
-    plt.grid()
-    plt.title(dat.name)
-    plt.xlabel('t [s]')
-    plt.ylabel('Storage fraction (ratio)')
-
-    plt.figure()
-    plt.plot(dat.ssd['t'], dat.ssd['eta'], label='eta from data set')
-    plt.plot(dat.ssd['t'], sim.eta_sim, label='eta_saturated')
-    plt.legend()
-    plt.grid()
-    plt.title(dat.name)
-    plt.xlabel('t [s]')
-    plt.ylabel('eta' + uc.units['eta'])
+            plt.figure()
+            plt.plot(dat.ssd['t'], dat.ssd['eta'], label='eta from data set')
+            plt.plot(dat.ssd['t'], sim.eta_sim, label='eta_saturated')
+            plt.legend()
+            plt.grid()
+            plt.title(dat.name)
+            plt.xlabel('t [s]')
+            plt.ylabel('eta' + uc.units['eta'])
+            plt.savefig("figs/eta_bounds_"+dat.name+".png")
 
     plt.show()
-    print(dat.name)
-    pp.pprint(sim.theta_sat.thetas)
+
+# plt.figure()
+# plt.plot(dat.ssd['t'], sim.str_frac, label="Storage fraction")
+# plt.legend()
+# plt.grid()
+# plt.title(dat.name)
+# plt.xlabel('t [s]')
+# plt.ylabel('Storage fraction (ratio)')

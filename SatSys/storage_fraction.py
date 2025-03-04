@@ -37,6 +37,8 @@ for tst in range(3):
     plt.legend()
     plt.grid()
     plt.xlabel('t [s]')
-    plt.ylabel('Max. NOx Reduction')
+    plt.ylabel(r'$\eta_{sat, normalized} = \frac{F(k)}{u_1(k)} \eta_{sat}(k)$')
+    plt.title("Max." + r'$NO_x$'+"reduction normalized w.r.t flow rate and inlet "+ r'$NO_x$')
+    plt.savefig("./figs/max_nox_"+dat.name+".png")
 plt.show()
 

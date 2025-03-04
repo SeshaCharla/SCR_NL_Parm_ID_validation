@@ -16,9 +16,13 @@ class cAb_mats():
         self.T = self.dat.ssd['T']
         self.data_len = len(self.T)
         self.row_len = self.get_row_len()
-        self.b_vecs = self.get_b()
-        self.A_mats = self.get_A()
+        self.b_eta_vecs = self.get_b_eta()
+        self.b_u1_vecs = self.get_b_u1()
+        self.A_part_mats = self.get_A_part()
         self.c_vecs = self.get_c()
+        self.b_vecs = self.b_eta_vecs
+        self.A_mats = self.A_part_mats
+
     # ==================================================================================================================
     def get_interval_k(self, k) -> str:
         """ Get the interval of the kth time step """
@@ -37,7 +41,7 @@ class cAb_mats():
         return mat_sizes
     # ==================================================================================================================
 
-    def get_b(self) -> dict[str, np.ndarray]:
+    def get_b_eta(self) -> dict[str, np.ndarray]:
         """ Returns a dictionary of b vectors for each of the partitions """
         # Creating the dictionary with zero matrices ============================================
         b_vecs = dict()
@@ -57,7 +61,28 @@ class cAb_mats():
         return b_vecs
     # ==================================================================================================================
 
-    def get_A(self) -> dict[str, np.ndarray]:
+    def get_b_u1(self) -> dict[str, np.ndarray]:
+        """ Returns a dictionary of b vectors for each of the partitions """
+        # Creating the dictionary with zero matrices ============================================
+        b_vecs = dict()
+        for key_T in self.swh.part_keys:
+            if self.row_len[key_T] == 0:
+                b_vecs[key_T] = None
+            else:
+                b_vecs[key_T] = np.zeros(self.row_len[key_T])
+        # ========================================================================================
+        irc = dict()     # interval row counter
+        for key_T in self.swh.part_keys:
+            irc[key_T] = 0
+        for k in range(1, self.data_len-1):
+            key_T = self.get_interval_k(k)
+            b_vecs[key_T][irc[key_T]] = self.dat.ssd['u1'][k]
+            irc[key_T] += 1
+        return b_vecs
+
+    # ==================================================================================================================
+
+    def get_A_part(self) -> dict[str, np.ndarray]:
         """ Returns a dictionary of A matrices for each of the partitions """
         # Creating a dictionary with zero matrices
         A_mats = dict()
@@ -84,8 +109,8 @@ class cAb_mats():
         """ Returns the c vectors for the linear programming """
         c_vecs = dict()
         for key in self.swh.part_keys:
-            if self.A_mats[key] is not None:
-                c_vecs[key] = np.sum(self.A_mats[key], axis=0)
+            if self.A_part_mats[key] is not None:
+                c_vecs[key] = np.sum(self.A_part_mats[key], axis=0)
             else:
                 c_vecs[key] = None
         return c_vecs

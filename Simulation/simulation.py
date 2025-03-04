@@ -16,6 +16,7 @@ class NOx_sim():
         self.parms = ls.LS_parms(self.dat, T_parts = self.T_parts, T_ords = self.T_ords)
         self.thetas = self.parms.thetas
         self.swh = sh.switch_handle(self.T_parts)
+        self.x1_sim, self.eta_sim, self.f_sig, self.f_gam = self.run_sim()
 
     def f_sigma(self, x1_k, k):
         """ Calculates f_sigma(k) """
@@ -47,29 +48,81 @@ class NOx_sim():
         f_gam = (kmd.u1k/kmd.Fk) * (theta_Gamma @ phiT.phi_T(kmd.Tk, self.T_ords['Gamma']))[0, 0]
         return f_gam
 
+    def eta_kp1(self, x1_k, k):
+        """ Calculates eta(k+1) given eta(k) """
+        f_sig_k = self.f_sigma(x1_k, k)
+        f_gamma_k = self.f_gamma(k)
+        sig_diff = np.abs(f_sig_k - self.dat.ssd['u1'][k-1])
+        gam_diff = np.abs(f_gamma_k - self.dat.ssd['u1'][k-1])
+        if gam_diff < sig_diff:
+            f_eta = f_gamma_k
+        else:
+            f_eta = f_sig_k
+            if f_eta < 0:
+                f_eta = 0
+        return f_eta
+
+    def run_sim(self):
+        """ Runs the simulation """
+        x1_sim = np.zeros(self.dat_len)
+        eta_sim = np.zeros(self.dat_len)
+        f_sig = np.zeros(self.dat_len)
+        f_gam = np.zeros(self.dat_len)
+        x1_sim[0] = self.dat.ssd['x1'][0]
+        eta_sim[0] = self.dat.ssd['eta'][0]
+        f_sig[0] = eta_sim[0]
+        f_gam[0] = eta_sim[0]
+        x1_sim[1] = self.dat.ssd['x1'][1]
+        eta_sim[1] = self.dat.ssd['eta'][1]
+        for k in range(1, self.dat_len-1):
+            eta_sim[k+1] = self.eta_kp1(x1_sim[k], k)
+            x1_sim[k+1] = np.max([0,self.dat.ssd['u1'][k] - eta_sim[k+1]])
+            # Bounds
+            f_sig[k] = self.f_sigma(x1_sim[k], k)
+            f_gam[k] = self.f_gamma(k)
+        f_sig[-1] = eta_sim[-1]
+        f_gam[-1] = eta_sim[-1]
+        return x1_sim, eta_sim, f_sig, f_gam
+
     # ==================================================================================================================
 
 if __name__ == '__main__':
     import matplotlib.pyplot as plt
     import matplotlib
     from DataProcessing import unit_convs as uc
+    from Simulation import pfit
     matplotlib.use("tkAgg")
-    sim = NOx_sim(dd.decimatedTestData(0, 2), T_parts=sh.T_hl, T_ords=phiT.T_ord)
-    k = 900
-    print(sim.f_gamma(k))
-    print(sim.f_sigma(sim.dat.ssd['x1'][k], k))
-    print(sim.dat.ssd['u1'][k])
-    print(sim.dat.ssd['eta'][k+1])
 
-#     plt.figure()
-#     plt.plot(sim.ssd['t'], sim.x1_sim, label="simulated", linewidth=1)
-#     plt.plot(sim.ssd['t'], sim.ssd['x1'], label="data", linewidth=1)
-#     plt.plot(sim.ssd['t'], sim.ssd['u2'], '--', label="Urea Injection", linewidth=1)
-#     plt.plot(sim.ssd['t'], sim.ssd['u1'], '--', label="Inlet NOx", linewidth=1)
-#     plt.xlabel("Time [s]")
-#     plt.ylabel("x1" + uc.units['x1'] + " | u2" + uc.units['u2'] + " | u1" + uc.units['u1'])
-#     plt.title(sim.ls_sol.name)
-#     plt.legend()
-#     plt.grid(True)
-#     plt.savefig("./figs/sim"+sim.ls_sol.name+".png")
-#     plt.show()
+#    plt.figure()
+#    plt.plot(sim.dat.ssd['t'], sim.x1_sim, label="simulated", linewidth=1)
+#    plt.plot(sim.dat.ssd['t'], sim.dat.ssd['x1'], label="data", linewidth=1)
+#    # plt.plot(sim.dat.ssd['t'], sim.dat.ssd['u2'], '--', label="Urea Injection", linewidth=1)
+#    # plt.plot(sim.dat.ssd['t'], sim.dat.ssd['u1'], '--', label="Inlet NOx", linewidth=1)
+#    plt.xlabel("Time [s]")
+#    plt.ylabel("x1" + uc.units['x1'] + " | u2" + uc.units['u2'] + " | u1" + uc.units['u1'])
+#    plt.title("Tailpipe NOx" + sim.dat.name)
+#    plt.legend()
+#    plt.grid(True)
+#    plt.savefig("./figs/sim"+sim.dat.name+".png")
+
+    for age in range(2):
+        for test in range(3):
+            sim = NOx_sim(dd.decimatedTestData(age, test), T_parts=sh.T_hl, T_ords=phiT.T_ord)
+            per_fit = pfit.pfit(sim.dat.ssd['eta'], sim.eta_sim)
+            if test == 0 or test == 1:
+                per_fit = pfit.pfit(sim.dat.ssd['eta'][400:900], sim.eta_sim[400:900])
+            s = "%fit = {}".format(np.round(per_fit, 2))
+            plt.figure()
+            plt.plot(sim.dat.ssd['t'], sim.eta_sim, label="simulated", linewidth=1)
+            plt.plot(sim.dat.ssd['t'], sim.dat.ssd['eta'], label="data", linewidth=1)
+            # plt.plot(sim.dat.ssd['t'], sim.f_sig, '--', label="simulated Unsaturated", linewidth=1)
+            # plt.plot(sim.dat.ssd['t'], sim.f_gam, '--', label="simulated Saturated", linewidth=1)
+            plt.text(300, 30, s)
+            plt.ylim([-0.1, 50])
+            plt.xlabel("Time [s]")
+            plt.ylabel(r'$\eta$' + uc.units['eta'])
+            plt.title("NOx reduction per-sample - " + sim.dat.name)
+            plt.legend()
+            plt.grid(True)
+            plt.savefig("./figs/eta_sim_" + sim.dat.name + ".png")
+    plt.show()
