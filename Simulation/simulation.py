@@ -93,18 +93,6 @@ if __name__ == '__main__':
     from Simulation import pfit
     matplotlib.use("tkAgg")
 
-#    plt.figure()
-#    plt.plot(sim.dat.ssd['t'], sim.x1_sim, label="simulated", linewidth=1)
-#    plt.plot(sim.dat.ssd['t'], sim.dat.ssd['x1'], label="data", linewidth=1)
-#    # plt.plot(sim.dat.ssd['t'], sim.dat.ssd['u2'], '--', label="Urea Injection", linewidth=1)
-#    # plt.plot(sim.dat.ssd['t'], sim.dat.ssd['u1'], '--', label="Inlet NOx", linewidth=1)
-#    plt.xlabel("Time [s]")
-#    plt.ylabel("x1" + uc.units['x1'] + " | u2" + uc.units['u2'] + " | u1" + uc.units['u1'])
-#    plt.title("Tailpipe NOx" + sim.dat.name)
-#    plt.legend()
-#    plt.grid(True)
-#    plt.savefig("./figs/sim"+sim.dat.name+".png")
-
     for age in range(2):
         for test in range(3):
             sim = NOx_sim(dd.decimatedTestData(age, test), T_parts=sh.T_hl, T_ords=phiT.T_ord)
@@ -117,8 +105,8 @@ if __name__ == '__main__':
             plt.plot(sim.dat.ssd['t'], sim.dat.ssd['eta'], label="data", linewidth=1)
             # plt.plot(sim.dat.ssd['t'], sim.f_sig, '--', label="simulated Unsaturated", linewidth=1)
             # plt.plot(sim.dat.ssd['t'], sim.f_gam, '--', label="simulated Saturated", linewidth=1)
-            plt.text(300, 30, s)
-            plt.ylim([-0.1, 50])
+            plt.text(300, 25, s)
+            plt.ylim([-0.1, 30])
             plt.xlabel("Time [s]")
             plt.ylabel(r'$\eta$' + uc.units['eta'])
             plt.title("NOx reduction per-sample - " + sim.dat.name)
@@ -126,3 +114,17 @@ if __name__ == '__main__':
             plt.grid(True)
             plt.savefig("./figs/eta_sim_" + sim.dat.name + ".png")
     plt.show()
+
+
+# Plotting x_1 from eta
+#    plt.figure()
+#    plt.plot(sim.dat.ssd['t'], sim.x1_sim, label="simulated", linewidth=1)
+#    plt.plot(sim.dat.ssd['t'], sim.dat.ssd['x1'], label="data", linewidth=1)
+#    # plt.plot(sim.dat.ssd['t'], sim.dat.ssd['u2'], '--', label="Urea Injection", linewidth=1)
+#    # plt.plot(sim.dat.ssd['t'], sim.dat.ssd['u1'], '--', label="Inlet NOx", linewidth=1)
+#    plt.xlabel("Time [s]")
+#    plt.ylabel("x1" + uc.units['x1'] + " | u2" + uc.units['u2'] + " | u1" + uc.units['u1'])
+#    plt.title("Tailpipe NOx" + sim.dat.name)
+#    plt.legend()
+#    plt.grid(True)
+#    plt.savefig("./figs/sim"+sim.dat.name+".png")

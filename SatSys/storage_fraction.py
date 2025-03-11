@@ -14,31 +14,44 @@ from DataProcessing import unit_convs as uc
 
 dat_set = dd.load_decimated_test_data_set()
 
-for tst in range(3):
-    plt.figure()
+# for tst in range(3):
+#     plt.figure()
+#     for age in range(2):
+#         dat = dat_set[age][tst]
+#         sim = sat_eta(dat, T_parts=sh.T_hl, T_ord=phiT.T_ord)
+#         plt.plot(dat.ssd['t'], sim.str_frac, label=dat.name)
+#
+#     plt.legend()
+#     plt.grid()
+#     plt.xlabel('t [s]')
+#     plt.ylabel('Storage Fraction')
+
+for tst in [2]:
+    plt.figure(2*tst)
+    plt.figure(2*tst+1)
+    lines = ['-', '--']
     for age in range(2):
         dat = dat_set[age][tst]
         sim = sat_eta(dat, T_parts=sh.T_hl, T_ord=phiT.T_ord)
-        plt.plot(dat.ssd['t'], sim.str_frac, label=dat.name)
-
-    plt.legend()
-    plt.grid()
-    plt.xlabel('t [s]')
-    plt.ylabel('Storage Fraction')
-
-for tst in range(3):
-    plt.figure()
-    for age in range(2):
-        dat = dat_set[age][tst]
-        sim = sat_eta(dat, T_parts=sh.T_hl, T_ord=phiT.T_ord)
+        plt.figure(2*tst)
         plt.plot(dat.ssd['t'], [ (dat.ssd['F'][k]/dat.ssd['u1'][k])*sim.eta_sim[k] for k in range(len(dat.ssd['t']))], label=dat.name)
+        plt.figure(2*tst+1)
         plt.plot(dat.ssd['t'], dat.ssd['T'], label="T_"+dat.name)
 
+    plt.figure(2*tst)
     plt.legend()
     plt.grid()
     plt.xlabel('t [s]')
     plt.ylabel(r'$\eta_{sat, normalized} = \frac{F(k)}{u_1(k)} \eta_{sat}(k)$')
-    plt.title("Max." + r'$NO_x$'+"reduction normalized w.r.t flow rate and inlet "+ r'$NO_x$')
+    plt.title(r'$\eta_{sat}$'+" normalized w.r.t flow rate and "+ r'$[NO_x]^{in}$')
     plt.savefig("./figs/max_nox_"+dat.name+".png")
+
+    plt.figure(2*tst+1)
+    plt.legend()
+    plt.grid()
+    plt.xlabel('t [s]')
+    plt.ylabel("Temperature "+uc.units['T'])
+    plt.savefig("./figs/max_nox_" + dat.name + "_T.png")
+
 plt.show()
 
