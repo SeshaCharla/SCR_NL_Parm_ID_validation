@@ -26,7 +26,7 @@ dat_set = dd.load_decimated_test_data_set()
 #     plt.xlabel('t [s]')
 #     plt.ylabel('Storage Fraction')
 
-for tst in [2]:
+for tst in [0, 1, 2]:
     plt.figure(2*tst)
     plt.figure(2*tst+1)
     lines = ['-', '--']

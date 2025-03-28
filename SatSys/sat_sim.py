@@ -57,6 +57,7 @@ if __name__ == "__main__":
             plt.figure()
             plt.plot(dat.ssd['t'], dat.ssd['eta'], label='eta from data set')
             plt.plot(dat.ssd['t'], sim.eta_sim, label='eta_saturated')
+            plt.plot(dat.ssd['t'], dat.ssd['F'], '--', label='F')
             plt.legend()
             plt.grid()
             plt.title(dat.name)
