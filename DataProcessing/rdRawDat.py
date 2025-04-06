@@ -64,7 +64,10 @@ class RawTestData():
         [0][j] - Degreened Data
         [1][j] - Aged Data
         """
-        test = [["dg_cftp", "dg_hftp", "dg_rmc"],
+        test = [["dg_cftp", "dg_hftp", "dg_rmc",
+                 "dg_cftp_1", "dg_hftp_1", "dg_rmc_1",
+                 "dg_cftp_2", "dg_hftp_2", "dg_rmc_2",
+                 "dg_cftp_3", "dg_hftp_3", "dg_rmc_3"],
                 ["aged_cftp", "aged_hftp", "aged_rmc"]]
         return test[age][test_type]
 
@@ -72,14 +75,25 @@ class RawTestData():
     def data_dir(self) -> str:
         """Returns the data directory for the test data"""
         dir_prefix = "../../Data"
-        test_dir_prefix = dir_prefix + "/test_cell_data/"
-        test_dict = {"aged_cftp": "g580040_Aged_cFTP.csv",
-                     "aged_hftp": "g580041_Aged_hFTP.csv",
-                      "aged_rmc": "g580043_Aged_RMC.csv",
-                       "dg_cftp": "g577670_DG_cFTP.csv",
-                       "dg_hftp": "g577671_DG_hFTP.csv",
-                        "dg_rmc": "g577673_DG_RMC.csv"}
-        return test_dir_prefix + test_dict[self.name]
+        test_dir_prefix = "/test_cell_data/"
+        add_test_dir_prefix = "/Additional_TC_Data_DG/"
+        test_dict = {"aged_cftp": test_dir_prefix + "g580040_Aged_cFTP.csv",
+                     "aged_hftp": test_dir_prefix + "g580041_Aged_hFTP.csv",
+                      "aged_rmc": test_dir_prefix + "g580043_Aged_RMC.csv",
+                       "dg_cftp": test_dir_prefix + "g577670_DG_cFTP.csv",
+                       "dg_hftp": test_dir_prefix + "g577671_DG_hFTP.csv",
+                        "dg_rmc": test_dir_prefix + "g577673_DG_RMC.csv",
+                     "dg_cftp_1": add_test_dir_prefix + "FTP1/" + "g611150_cFTP.csv",
+                     "dg_hftp_1": add_test_dir_prefix + "FTP1/" + "g611151_hFTP.csv",
+                      "dg_rmc_1": add_test_dir_prefix + "RMC/"  + "RMCSET_400HP_020518.csv",
+                     "dg_cftp_2": add_test_dir_prefix + "FTP2/" + "g598050_cFTP.csv",
+                     "dg_hftp_2": add_test_dir_prefix + "FTP2/" + "g598051_hFTP.csv",
+                      "dg_rmc_2": add_test_dir_prefix + "RMC/"  + "RMCSET_400HP_022618.csv",
+                     "dg_cftp_3": add_test_dir_prefix + "FTP3/" + "g598940_cFTP.csv",
+                     "dg_hftp_3": add_test_dir_prefix + "FTP3/" + "g598941_hFTP.csv",
+                      "dg_rmc_3": add_test_dir_prefix + "RMC/"  + "RMCSET_400HP_040218.csv"
+        }
+        return dir_prefix + test_dict[self.name]
 
     # ===============================================================
 
