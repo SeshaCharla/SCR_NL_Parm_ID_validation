@@ -78,10 +78,10 @@ class FilteredTestData():
                              self.rawData.raw['F']]).T
         iod_tab = rmNaNrows(raw_tab)
         # Clearing non-existant iod data, y1 doesn't work bellow a certain temperature
-        if self.name in ["dg_cftp", "aged_cftp"]:
+        if self.name in ["dg_cftp", "dg_cftp_1", "dg_cftp_2", "dg_cftp_3", "aged_cftp"]:
             print("clearing non-existant y1 in " + self.name + " data for iod")
             iod_tab = np.copy(iod_tab[int(950/self.dt):])
-        elif self.name in ["dg_hftp", "aged_hftp"]:
+        elif self.name in ["dg_hftp", "dg_hftp_1", "dg_hftp_2", "dg_hftp_3", "aged_hftp"]:
             print("clearing non-existant y1 in " + self.name + " data for iod")
             iod_tab = np.copy(iod_tab[int(400/self.dt):int(600/self.dt)])
             # The tail region is cross sensitive to tail-pipe ammonia in dg-hftp case
@@ -132,7 +132,8 @@ class FilteredTestData():
 ## =====================================================================================================================
 def load_filtered_test_data_set():
     # Load the test Data
-    filtered_test_data = [[FilteredTestData(age, tst) for tst in range(3)] for age in range(2)]
+    ag_tsts = [12, 3]
+    filtered_test_data = [[FilteredTestData(age, tst) for tst in range(ag_tsts[age])] for age in range(2)]
     return filtered_test_data
 
 # ======================================================================================================================
@@ -147,10 +148,11 @@ if __name__ == '__main__':
     test_data = rd.load_test_data_set()
     filtered_test_data = load_filtered_test_data_set()
     fig_dpi = 300
+    ag_tsts = [12, 3]
 
     # Plotting all the Data sets
     for i in range(2):
-        for j in range(3):
+        for j in range(ag_tsts[i]):
             for key in ['u1', 'u2', 'T', 'F', 'x1', 'x2', 'eta']:
                 plt.figure()
                 if (key != 'eta'):
