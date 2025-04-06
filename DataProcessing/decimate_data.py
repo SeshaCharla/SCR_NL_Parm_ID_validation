@@ -25,6 +25,10 @@ class decimatedTestData():
         for key in ssd_keys:
             ssd[key] = dc.decimate_withTD(self.filtData.ssd['t_skips'], self.filtData.ssd[key])
         ssd['t'] = dc.decimate_time2OneHz(self.filtData.ssd['t_skips'], self.filtData.ssd['t'])
+        if self.name == "dg_rmc_2":
+            for key in ssd_keys:
+                ssd[key] = dc.sig.decimate(self.filtData.ssd[key], q=10, n=7, ftype='iir', zero_phase=True)
+            ssd['t'] = np.arange(0, self.filtData.ssd['t'][-1]+1, 1)
         ssd['t_skips'] = fd.find_discontinuities(ssd['t'], self.dt)
         ssd['eta_dec'] = ssd['eta']
         ssd['eta'] = etaCalc.calc_eta_TD(ssd['x1'], ssd['u1'], ssd['t_skips'])
@@ -38,6 +42,10 @@ class decimatedTestData():
         for key in iod_keys:
             iod[key] = dc.decimate_withTD(self.filtData.iod['t_skips'], self.filtData.iod[key])
         iod['t'] = dc.decimate_time2OneHz(self.filtData.iod['t_skips'], self.filtData.iod['t'])
+        if self.name == "dg_rmc_2":
+            for key in iod_keys:
+                iod[key] = dc.sig.decimate(self.filtData.iod[key], q=10, n=7, ftype='iir', zero_phase=True)
+            iod['t'] = np.arange(0, self.filtData.iod['t'][-1]+1, 1)
         iod['t_skips'] = fd.find_discontinuities(iod['t'], self.dt)
         iod['eta_dec'] = iod['eta']
         iod['eta'] = etaCalc.calc_eta_TD(iod['y1'], iod['u1'], iod['t_skips'])
