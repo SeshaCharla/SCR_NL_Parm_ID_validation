@@ -1,10 +1,10 @@
 import numpy as np
 
 # Temperature Ranges
-T_narrow = [-17.45, (-17.45 -6.55)/2,  -6.55, (-6.55 + 2.4)/2, 2.4, (2.4 + 15.5)/2, 15.5]
-T_wide = [-17.45, -6.55, 2.4, 15.5]
-T_none = [-17.45, 15.5]
-T_hl = [-17.45, -6.55, 15.5]
+T_narrow = [-17.5, (-17.45 -6.55)/2,  -6.55, (-6.55 + 2.4)/2, 2.4, (2.4 + 16)/2, 16]
+T_wide = [-17.5, -6.55, 2.4, 16]
+T_none = [-17.5, 16]
+T_hl = [-17.5, -6.55, 16]
 
 class switch_handle:
     """ Class to handle switching based on temperature """

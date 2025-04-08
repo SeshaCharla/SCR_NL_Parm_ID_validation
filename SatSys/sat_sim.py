@@ -49,8 +49,10 @@ if __name__ == "__main__":
     matplotlib.use('TkAgg')
     from DataProcessing import unit_convs as uc
 
+    ag_tst = [12, 3]
+
     for age in range(2):
-        for test in range(3):
+        for test in range(ag_tst[age]):
             dat = dd.decimatedTestData(age, test)
             sim = sat_eta(dat, T_parts=sh.T_hl, T_ord=phiT.T_ord)
 

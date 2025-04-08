@@ -12,11 +12,11 @@ fig_dpi = 300
 key = 'T'
 
 lines = (sh.switch_handle(sh.T_hl)).T_parts
-
+ag_tst = [12, 3]
 # Plotting all the Data sets
 plt.figure()
 for i in range(2):
-    for j in range(3):
+    for j in range(ag_tst[i]):
         plt.plot(dct[i][j].ssd['t'], dct[i][j].ssd[key], label= dct[i][j].name, linewidth=1)
 for line in lines:
     plt.plot(dct[i][j].ssd['t'], line * np.ones(np.shape(dct[i][j].ssd['t'])), 'k--', linewidth=1)
