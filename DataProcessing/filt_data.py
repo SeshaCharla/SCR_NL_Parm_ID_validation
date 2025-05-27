@@ -132,7 +132,7 @@ class FilteredTestData():
 ## =====================================================================================================================
 def load_filtered_test_data_set():
     # Load the test Data
-    ag_tsts = [12, 3]
+    ag_tsts = [12, 15]
     filtered_test_data = [[FilteredTestData(age, tst) for tst in range(ag_tsts[age])] for age in range(2)]
     return filtered_test_data
 
@@ -148,7 +148,7 @@ if __name__ == '__main__':
     test_data = rd.load_test_data_set()
     filtered_test_data = load_filtered_test_data_set()
     fig_dpi = 300
-    ag_tsts = [12, 3]
+    ag_tsts = [12, 15]
 
     # Plotting all the Data sets
     for i in range(2):

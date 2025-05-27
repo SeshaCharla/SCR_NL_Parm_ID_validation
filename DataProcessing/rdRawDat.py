@@ -145,7 +145,7 @@ if __name__ == "__main__":
     # Actually load the entire Data set ----------------------------------------
     test_data = load_test_data_set()
     fig_dpi = 300
-    ag_tsts = [12, 3]
+    ag_tsts = [12, 15]
 
     # Plotting all the Data sets
     for i in range(2):
