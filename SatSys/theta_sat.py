@@ -40,8 +40,9 @@ class theta_sat:
 # Testing
 if __name__ == '__main__':
     import pprint as pp
+    ag_tst = [12, 3]
     for age in range(2):
-        for tst in range(3):
+        for tst in range(ag_tst[age]):
             dat = dd.decimatedTestData(age, tst)
             thetas = theta_sat(dat, T_parts=sh.T_hl, T_ord=phiT.T_ord)
             print(dat.name)

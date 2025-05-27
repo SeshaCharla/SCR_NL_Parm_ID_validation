@@ -72,7 +72,7 @@ if __name__ == '__main__':
     dct = load_decimated_test_data_set()
     fig_dpi = 300
     ag_tsts = [12, 3]
-    show_plot = None
+    show_plot = 'x1'
 
     # Plotting all the Data sets
     for i in range(2):
