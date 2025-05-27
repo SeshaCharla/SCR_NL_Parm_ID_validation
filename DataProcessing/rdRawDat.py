@@ -43,6 +43,8 @@ class RawTestData():
         NOx = np.array(data.get(('EXH_CW_NOX_COR_U1', 'PPM')), dtype=np.float64).flatten()
         if len(NOx) != len(raw_data['t']):   # For the new data set
             NOx = np.array(data.get(('EXH_CW_NOX_FTIR_COR_U2', 'PPM')), dtype=np.float64).flatten()
+        if len(NOx) != len(raw_data['t']):
+            NOx = np.array(data.get(('EXH_CW_NOX_FTIR_MEA', 'PPM')), dtype=np.float64).flatten()
         raw_data['x1'] = uc.uConv(NOx, Tscr, "ppm to 10^-3 mol/m^3")
         # print("len(x1) = ", np.shape(raw_data['x1']))
         # =======================================================================================
@@ -83,7 +85,11 @@ class RawTestData():
                  "dg_cftp_1", "dg_hftp_1", "dg_rmc_1",
                  "dg_cftp_2", "dg_hftp_2", "dg_rmc_2",
                  "dg_cftp_3", "dg_hftp_3", "dg_rmc_3"],
-                ["aged_cftp", "aged_hftp", "aged_rmc"]]
+                ["aged_cftp", "aged_hftp", "aged_rmc",
+                 "aged_cftp_1", "aged_hftp_1", "aged_rmc_1",
+                 "aged_cftp_2", "aged_hftp_2", "aged_rmc_2",
+                 "aged_cftp_3", "aged_hftp_3", "aged_rmc_3",
+                 "aged_cftp_4", "aged_hftp_4", "aged_rmc_4"]]
         return test[age][test_type]
 
     # ==============================================================
@@ -91,23 +97,36 @@ class RawTestData():
         """Returns the data directory for the test data"""
         dir_prefix = "../../Data"
         test_dir_prefix = "/test_cell_data/"
-        add_test_dir_prefix = "/Additional_TC_Data_DG/"
+        add_test_dir_prefix_DG = "/Additional_TC_Data_DG/"
+        add_test_dir_prefix_Aged = "/Additional_TC_Data_Aged/"
         test_dict = {"aged_cftp": test_dir_prefix + "g580040_Aged_cFTP.csv",
                      "aged_hftp": test_dir_prefix + "g580041_Aged_hFTP.csv",
                       "aged_rmc": test_dir_prefix + "g580043_Aged_RMC.csv",
                        "dg_cftp": test_dir_prefix + "g577670_DG_cFTP.csv",
                        "dg_hftp": test_dir_prefix + "g577671_DG_hFTP.csv",
                         "dg_rmc": test_dir_prefix + "g577673_DG_RMC.csv",
-                     "dg_cftp_1": add_test_dir_prefix + "FTP1/" + "g611150_cFTP.csv",
-                     "dg_hftp_1": add_test_dir_prefix + "FTP1/" + "g611151_hFTP.csv",
-                      "dg_rmc_1": add_test_dir_prefix + "RMC/"  + "RMCSET_400HP_020518.csv",
-                     "dg_cftp_2": add_test_dir_prefix + "FTP2/" + "g598050_cFTP.csv",
-                     "dg_hftp_2": add_test_dir_prefix + "FTP2/" + "g598051_hFTP.csv",
-                      "dg_rmc_2": add_test_dir_prefix + "RMC/"  + "RMCSET_400HP_022618.csv",
-                     "dg_cftp_3": add_test_dir_prefix + "FTP3/" + "g598940_cFTP.csv",
-                     "dg_hftp_3": add_test_dir_prefix + "FTP3/" + "g598941_hFTP.csv",
-                      "dg_rmc_3": add_test_dir_prefix + "RMC/"  + "RMCSET_400HP_040218.csv"
-        }
+                     "dg_cftp_1": add_test_dir_prefix_DG + "FTP1/" + "g611150_cFTP.csv",
+                     "dg_hftp_1": add_test_dir_prefix_DG + "FTP1/" + "g611151_hFTP.csv",
+                      "dg_rmc_1": add_test_dir_prefix_DG + "RMC/"  + "RMCSET_400HP_020518.csv",
+                     "dg_cftp_2": add_test_dir_prefix_DG + "FTP2/" + "g598050_cFTP.csv",
+                     "dg_hftp_2": add_test_dir_prefix_DG + "FTP2/" + "g598051_hFTP.csv",
+                      "dg_rmc_2": add_test_dir_prefix_DG + "RMC/"  + "RMCSET_400HP_022618.csv",
+                     "dg_cftp_3": add_test_dir_prefix_DG + "FTP3/" + "g598940_cFTP.csv",
+                     "dg_hftp_3": add_test_dir_prefix_DG + "FTP3/" + "g598941_hFTP.csv",
+                      "dg_rmc_3": add_test_dir_prefix_DG + "RMC/"  + "RMCSET_400HP_040218.csv",
+                   "aged_cftp_1": add_test_dir_prefix_Aged + "Run1_450HP/" + "g456420_ColdFTP.csv",
+                   "aged_hftp_1": add_test_dir_prefix_Aged + "Run1_450HP/" + "g456421_HotFTP.csv",
+                    "aged_rmc_1": add_test_dir_prefix_Aged + "Run1_450HP/" + "g456423_RMCSET.csv",
+                   "aged_cftp_2": add_test_dir_prefix_Aged + "Run2_450HP/" + "g458060_ColdFTP.csv",
+                   "aged_hftp_2": add_test_dir_prefix_Aged + "Run2_450HP/" + "g458061_HotFTP.csv",
+                    "aged_rmc_2": add_test_dir_prefix_Aged + "Run2_450HP/" + "g458052_RMCSET.csv",
+                   "aged_cftp_3": add_test_dir_prefix_Aged + "Run3_450HP/" + "g462430_ColdFTP.csv",
+                   "aged_hftp_3": add_test_dir_prefix_Aged + "Run3_450HP/" + "g462431_HotFTP.csv",
+                    "aged_rmc_3": add_test_dir_prefix_Aged + "Run3_450HP/" + "g462418_RMCSET.csv",
+                   "aged_cftp_4": add_test_dir_prefix_Aged + "Run4_450HP/" + "g464210_ColdFTP.csv",
+                   "aged_hftp_4": add_test_dir_prefix_Aged + "Run4_450HP/" + "g464211_HotFTP.csv",
+                    "aged_rmc_4": add_test_dir_prefix_Aged + "Run4_450HP/" + "g462492_RMCSET.csv"
+                     }
         return dir_prefix + test_dict[self.name]
 
     # ===============================================================
@@ -115,7 +134,7 @@ class RawTestData():
 ## =====================================================================================================================
 def load_test_data_set():
     # Load the test Data
-    ag_tsts = [12, 3]
+    ag_tsts = [12, 15]
     test_data = [[RawTestData(age, tst) for tst in range(ag_tsts[age])] for age in range(2)]
     return test_data
 
