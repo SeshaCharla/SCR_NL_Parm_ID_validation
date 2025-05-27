@@ -56,7 +56,7 @@ class decimatedTestData():
 ## =====================================================================================================================
 def load_decimated_test_data_set():
     # Load the test Data
-    ag_tsts = [12, 3]
+    ag_tsts = [12, 15]
     decimated_test_data = [[decimatedTestData(age, tst) for tst in range(ag_tsts[age])] for age in range(2)]
     return decimated_test_data
 
@@ -71,8 +71,8 @@ if __name__ == '__main__':
     # Actually load the entire Data set ----------------------------------------
     dct = load_decimated_test_data_set()
     fig_dpi = 300
-    ag_tsts = [12, 3]
-    show_plot = 'x1'
+    ag_tsts = [12, 15]
+    show_plot = None
 
     # Plotting all the Data sets
     for i in range(2):
