@@ -27,6 +27,7 @@ dat_set = dd.load_decimated_test_data_set()
 #     plt.ylabel('Storage Fraction')
 
 C = ['tab:blue', 'tab:green', 'tab:cyan', 'tab:olive']
+C_age = ['tab:red', 'tab:brown', 'tab:orange', 'tab:pink', 'tab:purple']
 for tst in [0, 1, 2]:
     plt.figure(2*tst)
     plt.figure(2*tst+1)
@@ -41,13 +42,16 @@ for tst in [0, 1, 2]:
                      [(dat.ssd['F'][k] / dat.ssd['u1'][k]) * sim.eta_sim[k] for k in range(len(dat.ssd['t']))],'--', label=dat.name, color=C[i])
                 plt.figure(2 * tst + 1)
                 plt.plot(dat.ssd['t'], dat.ssd['T'], label="T_" + dat.name)
-        else:
-            dat = dat_set[age][tst]
+        elif age == 1:
+            tst_n = tst + 4*i
+            dat = dat_set[age][tst_n]
             sim = sat_eta(dat, T_parts=sh.T_hl, T_ord=phiT.T_ord)
-            plt.figure(2*tst)
-            plt.plot(dat.ssd['t'], [ (dat.ssd['F'][k]/dat.ssd['u1'][k])*sim.eta_sim[k] for k in range(len(dat.ssd['t']))], 'tab:red', label=dat.name)
-            plt.figure(2*tst+1)
-            plt.plot(dat.ssd['t'], dat.ssd['T'], label="T_"+dat.name)
+            plt.figure(2 * tst)
+            plt.plot(dat.ssd['t'],
+                     [(dat.ssd['F'][k] / dat.ssd['u1'][k]) * sim.eta_sim[k] for k in range(len(dat.ssd['t']))], '--',
+                     label=dat.name, color=C_age[i])
+            plt.figure(2 * tst + 1)
+            plt.plot(dat.ssd['t'], dat.ssd['T'], label="T_" + dat.name)
 
     plt.figure(2*tst)
     plt.legend()
