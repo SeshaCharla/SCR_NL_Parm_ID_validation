@@ -93,7 +93,7 @@ if __name__ == '__main__':
     from Simulation import pfit
     matplotlib.use("tkAgg")
 
-    ag_tsts = [12, 3]
+    ag_tsts = [12, 15]
     for age in range(2):
         for test in range(ag_tsts[age]):
             sim = NOx_sim(dd.decimatedTestData(age, test), T_parts=sh.T_hl, T_ords=phiT.T_ord)

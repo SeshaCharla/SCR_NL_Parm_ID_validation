@@ -20,7 +20,7 @@ class decimatedTestData():
     # ========================================================================
     def decimate_ssd(self) -> dict[str, np.ndarray]:
         """ Decimate the filtered ssd data """
-        ssd_keys = ['x1', 'x2', 'u1', 'u2', 'F', 'T', 'eta']
+        ssd_keys = ['x1', 'x2', 'u1', 'u2', 'F', 'T', 'eta', 'mu']
         ssd = {}
         for key in ssd_keys:
             ssd[key] = dc.decimate_withTD(self.filtData.ssd['t_skips'], self.filtData.ssd[key])
@@ -37,7 +37,7 @@ class decimatedTestData():
     # =========================================================================
     def decimate_iod(self):
         """ Decimate the filtered iod data """
-        iod_keys = ['y1', 'u1', 'u2', 'F', 'T', 'eta']
+        iod_keys = ['y1', 'u1', 'u2', 'F', 'T', 'eta', 'mu']
         iod = {}
         for key in iod_keys:
             iod[key] = dc.decimate_withTD(self.filtData.iod['t_skips'], self.filtData.iod[key])
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     # Plotting all the Data sets
     for i in range(2):
         for j in range(ag_tsts[i]):
-            for key in ['u1', 'u2', 'T', 'F', 'x1', 'x2', 'eta']:
+            for key in ['u1', 'u2', 'T', 'F', 'x1', 'x2', 'eta', 'mu']:
                 plt.figure()
                 if (key != 'eta'):
                     plt.plot(dct[i][j].filtData.rawData.raw['t'], dct[i][j].filtData.rawData.raw[key], ':', label=key+"_raw", linewidth=1)
@@ -94,7 +94,7 @@ if __name__ == '__main__':
                 if key != show_plot:
                     plt.close()
 
-            for key in ['u1', 'u2', 'T', 'F', 'y1', 'eta']:
+            for key in ['u1', 'u2', 'T', 'F', 'y1', 'eta', 'mu']:
                 plt.figure()
                 if (key != 'eta'):
                     plt.plot(dct[i][j].filtData.rawData.raw['t'], dct[i][j].filtData.rawData.raw[key], ':', label=key+"_raw", linewidth=1)
@@ -127,5 +127,5 @@ if __name__ == '__main__':
     plt.savefig("figs/time_discontinuities_test.png", dpi=fig_dpi)
     plt.close()
 
-    plt.show()
-    # plt.close('all')
+    # plt.show()
+    plt.close('all')

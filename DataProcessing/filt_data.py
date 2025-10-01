@@ -45,7 +45,8 @@ class FilteredTestData():
                              self.rawData.raw['u1'],
                              self.rawData.raw['u2'],
                              self.rawData.raw['T'],
-                             self.rawData.raw['F']]).T
+                             self.rawData.raw['F'],
+                             self.rawData.raw['mu']]).T
         ssd_tab = rmNaNrows(raw_tab)
         ssd_mat = ssd_tab.T
         ssd = {}
@@ -56,10 +57,11 @@ class FilteredTestData():
         ssd['u2'] = np.array(ssd_mat[4]).flatten()
         ssd['T'] = np.array(ssd_mat[5]).flatten()
         ssd['F'] = np.array(ssd_mat[6]).flatten()
+        ssd['mu'] = np.array(ssd_mat[7]).flatten()
         # Find the time discontinuities in SSD Data
         ssd['t_skips'] = find_discontinuities(ssd['t'], self.dt)
         # Smooth all the data
-        for state in ['x1', 'x2', 'u1', 'u2', 'T', 'F']:
+        for state in ['x1', 'x2', 'u1', 'u2', 'T', 'F', 'mu']:
             ssd[state] = sf.sosff_TD(ssd['t_skips'], ssd[state])
         # Set datum for the data
         ssd = self.set_datum(ssd, type='ssd')
@@ -75,7 +77,8 @@ class FilteredTestData():
                              self.rawData.raw['u1'],
                              self.rawData.raw['u2'],
                              self.rawData.raw['T'],
-                             self.rawData.raw['F']]).T
+                             self.rawData.raw['F'],
+                             self.rawData.raw['mu']]).T
         iod_tab = rmNaNrows(raw_tab)
         # Clearing non-existant iod data, y1 doesn't work bellow a certain temperature
         if self.name in ["dg_cftp", "dg_cftp_1", "dg_cftp_2", "dg_cftp_3", "aged_cftp", "aged_cftp_1", "aged_cftp_2", "aged_cftp_3", "aged_cftp_4"]:
@@ -93,10 +96,11 @@ class FilteredTestData():
         iod['u2'] = np.array(iod_mat[3]).flatten()
         iod['T'] = np.array(iod_mat[4]).flatten()
         iod['F'] = np.array(iod_mat[5]).flatten()
+        iod['mu'] = np.array(iod_mat[6]).flatten()
         # Find the time discontinuities in IOD Data
         iod['t_skips'] = find_discontinuities(iod['t'], self.dt)
         # Smooth all the data
-        for state in ['y1', 'u1', 'u2', 'T', 'F']:
+        for state in ['y1', 'u1', 'u2', 'T', 'F', 'mu']:
             iod[state]= sf.sosff_TD(iod['t_skips'], iod[state])
         # Set datum for the data
         iod = self.set_datum(iod, type='iod')
@@ -114,8 +118,9 @@ class FilteredTestData():
         datum['u2'] = 0
         datum['F'] = 3     # From all the test cell data
         datum['y1'] = 0
-        ssd_keys = ['x1', 'x2', 'u1', 'u2', 'F']
-        iod_keys = ['y1', 'u1', 'u2', 'F']
+        datum['mu'] = 0
+        ssd_keys = ['x1', 'x2', 'u1', 'u2', 'F', 'mu']
+        iod_keys = ['y1', 'u1', 'u2', 'F', 'mu']
         if type == 'ssd':
             key_set = ssd_keys
         elif type == 'iod':
@@ -153,7 +158,7 @@ if __name__ == '__main__':
     # Plotting all the Data sets
     for i in range(2):
         for j in range(ag_tsts[i]):
-            for key in ['u1', 'u2', 'T', 'F', 'x1', 'x2', 'eta']:
+            for key in ['u1', 'u2', 'T', 'F', 'x1', 'x2', 'eta', 'mu']:
                 plt.figure()
                 if (key != 'eta'):
                     plt.plot(test_data[i][j].raw['t'], test_data[i][j].raw[key], '--', label=key, linewidth=1)
@@ -168,7 +173,7 @@ if __name__ == '__main__':
                     plt.close()
                 else:
                     plt.show()
-            for key in ['u1', 'u2', 'T', 'F', 'y1', 'eta']:
+            for key in ['u1', 'u2', 'T', 'F', 'y1', 'eta', 'mu']:
                 plt.figure()
                 if (key != 'eta'):
                     plt.plot(test_data[i][j].raw['t'], test_data[i][j].raw[key], '--', label=key, linewidth=1)

@@ -12,7 +12,7 @@ fig_dpi = 300
 key = 'T'
 
 lines = (sh.switch_handle(sh.T_hl)).T_parts
-ag_tst = [12, 3]
+ag_tst = [12, 15]
 # Plotting all the Data sets
 plt.figure()
 for i in range(2):

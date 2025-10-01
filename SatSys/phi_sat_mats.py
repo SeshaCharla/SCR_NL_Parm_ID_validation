@@ -119,6 +119,6 @@ class cAb_mats():
 # Testing
 if __name__ == "__main__":
     import pprint
-    cAb_rmc = cAb_mats(dd.decimatedTestData(0, 9), T_parts=sh.T_hl, T_ord=phiT.T_ord)
+    cAb_rmc = cAb_mats(dd.decimatedTestData(1, 9), T_parts=sh.T_hl, T_ord=phiT.T_ord)
     pprint.pprint(cAb_rmc.A_mats)
     pprint.pprint(cAb_rmc.c_vecs)

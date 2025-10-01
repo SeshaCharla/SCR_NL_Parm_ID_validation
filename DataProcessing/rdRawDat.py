@@ -73,6 +73,9 @@ class RawTestData():
         # print("len(u2) = ", np.shape(raw_data['u2']))
         # u1_sensor = np.array(Data.get(('EONOX_COMP_VALUE', 'ppm'))).flatten()
         # ======================================================================================================
+        # Ammonia to NOx ratio at the inlet
+        mu = np.array(data.get(('V_SCR_ANR_FDBK', 'None')), dtype=np.float64).flatten()
+        raw_data['mu'] = mu
         return raw_data
 
     # ==============================================================
@@ -95,7 +98,7 @@ class RawTestData():
     # ==============================================================
     def data_dir(self) -> str:
         """Returns the data directory for the test data"""
-        dir_prefix = "../../Data"
+        dir_prefix = "./../Data"
         test_dir_prefix = "/test_cell_data/"
         add_test_dir_prefix_DG = "/Additional_TC_Data_DG/"
         add_test_dir_prefix_Aged = "/Additional_TC_Data_Aged/"
@@ -150,7 +153,7 @@ if __name__ == "__main__":
     # Plotting all the Data sets
     for i in range(2):
         for j in range(ag_tsts[i]):
-            for key in ['u1', 'u2', 'T', 'F', 'x1', 'x2', 'y1']:
+            for key in ['u1', 'u2', 'T', 'F', 'x1', 'x2', 'y1', 'mu']:
                 plt.figure()
                 plt.plot(test_data[i][j].raw['t'], test_data[i][j].raw[key], label=test_data[i][j].name + " " + key, linewidth=1)
                 plt.grid()

@@ -7,8 +7,9 @@ from DataProcessing import decimate_data as dd
 from scipy.optimize import linprog
 from DataProcessing import unit_convs as uc
 from temperature import phiT
+import cvxpy as cvx
 
-dat = dd.decimatedTestData(1, 0)
+dat = dd.decimatedTestData(0, 2)
 
 data_len = len(dat.ssd['t'])
 
@@ -39,6 +40,15 @@ print(sol)
 theta = np.matrix(sol.x).T
 print(theta)
 
+# CVX problem
+theta = cvx.Variable(ord+1)
+gamma = cvx.Variable(data_len-1)
+prob = cvx.Problem(cvx.Minimize(cvx.sum(A @ theta - b + gamma)),
+                   [A @ theta + b >=  -gamma,
+                    gamma >= 0])
+prob.solve()
+theta = -theta.value
+
 # Simulation
 eta_sim = np.zeros(data_len)
 eta_sim[0] = dat.ssd['eta'][0]
@@ -54,13 +64,12 @@ plt.figure()
 plt.plot(dat.ssd['t'], dat.ssd['eta'], label="Data")
 plt.plot(dat.ssd['t'], eta_sim, label="Saturated NO_x Predicted")
 # plt.plot(dat.ssd['t'], dat.ssd['T'], '--', label="Temperature "+uc.units['T'])
-plt.plot(dat.ssd['t'], dat.ssd['u2'], '--', label="Urea Dosing "+uc.units['u2'])
+# plt.plot(dat.ssd['t'], dat.ssd['u2'], '--', label="Urea Dosing "+uc.units['u2'])
 plt.plot(dat.ssd['t'], dat.ssd['F'], '--', label="Flow Rate "+uc.units['F'])
 plt.grid(True)
 plt.legend()
 plt.title(dat.name+"_T_"+str(ord))
 plt.xlabel('Time [s]')
 plt.ylabel(r'$\eta$' + uc.units['eta'])
-plt.savefig("./figs/SatSys_"+dat.name+"_T_"+str(ord)+".png")
+plt.savefig("./SatSys/figs/SatSys_"+dat.name+"_T_"+str(ord)+".png")
 plt.show()
-
