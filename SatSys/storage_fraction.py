@@ -70,4 +70,3 @@ for tst in [0, 1, 2]:
     plt.savefig("./figs/max_nox_" + dat.name + "_T.png")
 
 plt.show()
-
